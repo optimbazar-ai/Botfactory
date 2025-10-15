@@ -4,11 +4,11 @@ services:
     name: botfactory
     env: python
     plan: free
-    buildCommand: pip install -r requirements.txt
-    startCommand: python app.py
+    buildCommand: pip install --upgrade pip && pip install -r requirements.txt
+    startCommand: gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
     envVars:
       - key: PYTHON_VERSION
-        value: 3.10.0
+        value: 3.11.9
       - key: SECRET_KEY
         generateValue: true
       - key: DATABASE_URL
@@ -17,8 +17,8 @@ services:
           property: connectionString
       - key: GEMINI_API_KEY
         sync: false
-      - key: OPENAI_API_KEY
-        sync: false
+      - key: FLASK_ENV
+        value: production
     autoDeploy: true
     
   # PostgreSQL Database

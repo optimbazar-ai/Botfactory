@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}Loyiha Haqida - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-5">
+            <h1>🤖 BotFactory</h1>
+            <p class="lead">AI-powered Telegram botlarini oson yaratish platformasi</p>
+        </div>
+
+        <div class="card mb-4">
+            <div class="card-body">
+                <h3>📋 Loyiha Haqida</h3>
+                <p>BotFactory - bu Telegram botlarini kod yozmasdan yaratish imkonini beruvchi platforma. Bizning maqsadimiz har kimga o'z AI yordamchisini yaratish imkoniyatini berish.</p>
+                
+                <h4>✨ Asosiy Xususiyatlar:</h4>
+                <ul>
+                    <li><strong>🚀 Oson Yaratish:</strong> Kod bilmasdan bot yaratish</li>
+                    <li><strong>🤖 AI Integration:</strong> Google Gemini bilan</li>
+                    <li><strong>🎵 Audio Support:</strong> Ovozli javoblar</li>
+                    <li><strong>📚 Knowledge Base:</strong> O'z ma'lumotlaringiz</li>
+                    <li><strong>🔄 Auto Polling:</strong> Webhook kerak emas</li>
+                    <li><strong>📱 Real-time Control:</strong> Start/Stop tugmalari</li>
+                </ul>
+
+                <h4>🛠️ Texnologiyalar:</h4>
+                <div class="row">
+                    <div class="col-md-6">
+                        <ul>
+                            <li>Python Flask</li>
+                            <li>Google Gemini AI</li>
+                            <li>Telegram Bot API</li>
+                            <li>SQLAlchemy</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <ul>
+                            <li>Bootstrap 5</li>
+                            <li>Google TTS</li>
+                            <li>PostgreSQL</li>
+                            <li>Render.com</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card">
+            <div class="card-body">
+                <h3>👨‍💻 Dasturchi</h3>
+                <p>Bu loyiha <strong>OptimBazar AI</strong> tomonidan yaratilgan.</p>
+                <p>Maqsad: O'zbekistonda AI texnologiyalarini ommalashtirish va har kimga o'z botini yaratish imkoniyatini berish.</p>
+                
+                <div class="text-center mt-4">
+                    <a href="{{ url_for('main.index') }}" class="btn btn-primary">Bosh Sahifa</a>
+                    <a href="{{ url_for('main.contact') }}" class="btn btn-outline-secondary">Aloqa</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

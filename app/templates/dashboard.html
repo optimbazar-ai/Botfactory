@@ -1,0 +1,108 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h2>📊 Dashboard</h2>
+            <a href="{{ url_for('bot.new_bot') }}" class="btn btn-primary">
+                <i class="bi bi-plus-circle"></i> Yangi Bot Yaratish
+            </a>
+        </div>
+
+        <!-- Statistika -->
+        <div class="row mb-4">
+            <div class="col-md-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h5>{{ bots|length }}</h5>
+                        <p class="mb-0">Jami Botlar</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h5>{{ bots|selectattr('is_active')|list|length }}</h5>
+                        <p class="mb-0">Faol Botlar</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h5>{{ current_user.subscription_type.title() }}</h5>
+                        <p class="mb-0">Rejangiz</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-md-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <h5>0</h5>
+                        <p class="mb-0">Xabarlar</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Botlar ro'yxati -->
+        {% if bots %}
+        <div class="card">
+            <div class="card-header">
+                <h5 class="mb-0">Sizning Botlaringiz</h5>
+            </div>
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>Nom</th>
+                                <th>Platform</th>
+                                <th>Til</th>
+                                <th>Holat</th>
+                                <th>Yaratilgan</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for bot in bots %}
+                            <tr>
+                                <td><strong>{{ bot.name }}</strong></td>
+                                <td><span class="badge bg-info">{{ bot.platform.title() }}</span></td>
+                                <td><span class="badge bg-secondary">{{ bot.language.upper() }}</span></td>
+                                <td>
+                                    {% if bot.is_active %}
+                                    <span class="badge bg-success">Faol</span>
+                                    {% else %}
+                                    <span class="badge bg-secondary">Nofaol</span>
+                                    {% endif %}
+                                </td>
+                                <td>{{ bot.created_at.strftime('%d.%m.%Y') }}</td>
+                                <td>
+                                    <a href="{{ url_for('bot.edit_bot', bot_id=bot.id) }}" class="btn btn-sm btn-outline-primary">Tahrirlash</a>
+                                    {% if bot.telegram_token_1 %}
+                                    <a href="{{ url_for('telegram.setup_webhook', bot_id=bot.id) }}" class="btn btn-sm btn-outline-success">Setup</a>
+                                    {% endif %}
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <h4 class="text-muted">Hali botlaringiz yo'q</h4>
+            <p class="text-muted">Birinchi botingizni yarating</p>
+            <a href="{{ url_for('bot.new_bot') }}" class="btn btn-primary btn-lg">
+                Birinchi Botni Yaratish
+            </a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

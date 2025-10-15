@@ -1,0 +1,92 @@
+{% extends "base.html" %}
+
+{% block title %}Aloqa - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-5">
+            <h1>📞 Aloqa</h1>
+            <p class="lead">Bizga murojaat qiling</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4>💬 Telegram</h4>
+                        <p>Eng tez javob olish uchun Telegram orqali yozing:</p>
+                        <a href="https://t.me/optimbazar" class="btn btn-primary" target="_blank">
+                            <i class="bi bi-telegram"></i> @optimbazar
+                        </a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-6">
+                <div class="card h-100">
+                    <div class="card-body">
+                        <h4>📧 Email</h4>
+                        <p>Rasmiy murojaat uchun email yuboring:</p>
+                        <a href="mailto:info@optimbazar.uz" class="btn btn-outline-primary">
+                            <i class="bi bi-envelope"></i> info@optimbazar.uz
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card mt-4">
+            <div class="card-body">
+                <h4>❓ Tez-tez So'raladigan Savollar</h4>
+                
+                <div class="accordion" id="faqAccordion">
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq1">
+                                Bot yaratish qancha vaqt oladi?
+                            </button>
+                        </h2>
+                        <div id="faq1" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Bot yaratish 2-3 daqiqa oladi. Telegram token qo'shish va "Ishga tushirish" tugmasini bosish kifoya.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq2">
+                                Webhook nima va kerakmi?
+                            </button>
+                        </h2>
+                        <div id="faq2" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Webhook kerak emas! Bizning polling tizimimiz avtomatik ishlaydi. Faqat "Ishga tushirish" tugmasini bosing.
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="accordion-item">
+                        <h2 class="accordion-header">
+                            <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#faq3">
+                                Audio javoblar qanday ishlaydi?
+                            </button>
+                        </h2>
+                        <div id="faq3" class="accordion-collapse collapse" data-bs-parent="#faqAccordion">
+                            <div class="accordion-body">
+                                Botingiz matnli javoblarni avtomatik ovozga aylantiradi. Google TTS va Gemini TTS ishlatiladi.
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="text-center mt-4">
+            <a href="{{ url_for('main.index') }}" class="btn btn-primary">Bosh Sahifa</a>
+            <a href="{{ url_for('main.about') }}" class="btn btn-outline-secondary">Loyiha Haqida</a>
+        </div>
+    </div>
+</div>
+{% endblock %}

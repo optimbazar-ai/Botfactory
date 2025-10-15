@@ -28,60 +28,39 @@ def create_app(config_class=Config):
     def load_user(user_id):
         return User.query.get(int(user_id))
     
-    # Register blueprints
-    try:
-        from app.routes.main import main_bp
-        app.register_blueprint(main_bp)
-    except ImportError:
-        print("⚠️ main route topilmadi")
+    # Register blueprints - faqat asosiy route'lar
+    print("🔄 Route'larni yuklash...")
     
+    # Main route
+    from app.routes.main import main_bp
+    app.register_blueprint(main_bp)
+    print("✅ Main route yuklandi")
+    
+    # Auth route  
     try:
         from app.routes.auth import auth_bp
         app.register_blueprint(auth_bp)
-    except ImportError:
-        print("⚠️ auth route topilmadi")
+        print("✅ Auth route yuklandi")
+    except Exception as e:
+        print(f"❌ Auth route xatolik: {e}")
     
+    # Bot route
     try:
         from app.routes.bot import bot_bp
         app.register_blueprint(bot_bp, url_prefix='/bots')
-    except ImportError:
-        print("⚠️ bot route topilmadi")
+        print("✅ Bot route yuklandi")
+    except Exception as e:
+        print(f"❌ Bot route xatolik: {e}")
     
+    # Telegram route
     try:
         from app.routes.telegram import telegram_bp
         app.register_blueprint(telegram_bp, url_prefix='/telegram')
-    except ImportError:
-        print("⚠️ telegram route topilmadi")
+        print("✅ Telegram route yuklandi")
+    except Exception as e:
+        print(f"❌ Telegram route xatolik: {e}")
     
-    try:
-        from app.routes.kb import kb_bp
-        app.register_blueprint(kb_bp, url_prefix='/kb')
-    except ImportError:
-        print("⚠️ kb route topilmadi")
-    
-    try:
-        from app.routes.payment import payment_bp
-        app.register_blueprint(payment_bp, url_prefix='/payment')
-    except ImportError:
-        print("⚠️ payment route topilmadi")
-    
-    try:
-        from app.routes.bot_control import bot_control_bp
-        app.register_blueprint(bot_control_bp)
-    except ImportError:
-        print("⚠️ bot_control route topilmadi")
-    
-    try:
-        from app.routes.ai import ai_bp
-        app.register_blueprint(ai_bp)
-    except ImportError:
-        print("⚠️ ai route topilmadi")
-    
-    try:
-        from app.routes.admin import admin_bp
-        app.register_blueprint(admin_bp)
-    except ImportError:
-        print("⚠️ admin route topilmadi")
+    print("🎉 Route'lar yuklandi!")
     
     # Create database tables
     with app.app_context():

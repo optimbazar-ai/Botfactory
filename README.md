@@ -27,8 +27,58 @@ A powerful platform for creating and managing Telegram bots with AI capabilities
 
 ## 🛠️ Local Development
 
+### **🚀 Tezkor boshlash:**
+
 ```bash
-# Clone repository
+# 1. Repository clone qiling
+git clone https://github.com/optimbazar-ai/Botfactory.git
+cd Botfactory
+
+# 2. Virtual environment yarating
+python -m venv venv
+venv\Scripts\activate  # Windows
+# source venv/bin/activate  # Linux/Mac
+
+# 3. Dependencies o'rnating
+pip install -r requirements.txt
+
+# 4. Environment variables sozlang
+copy .env.example .env
+# .env faylida GOOGLE_API_KEY ni to'ldiring
+
+# 5. Local server ishga tushiring
+python run_local.py
+```
+
+### **🤖 Bot test qilish:**
+
+#### **1. Webhook'siz test (oson):**
+```bash
+python test_bot_local.py
+```
+
+#### **2. Ngrok bilan webhook test:**
+```bash
+# Terminal 1: Flask server
+python run_local.py
+
+# Terminal 2: Ngrok
+ngrok http 5000
+
+# Terminal 3: Webhook sozlash
+python setup_ngrok.py
+```
+
+### **📝 Environment Variables (.env):**
+```bash
+# REQUIRED - Google API key
+GOOGLE_API_KEY=your-google-api-key-here
+
+# REQUIRED - Flask secret
+SESSION_SECRET=your-secret-key-here
+
+# OPTIONAL - Database (default: SQLite)
+# DATABASE_URL=postgresql://user:pass@localhost/botfactory
 git clone https://github.com/yourusername/botfactory.git
 cd botfactory
 

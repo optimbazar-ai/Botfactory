@@ -29,19 +29,23 @@ def create_app(config_class=Config):
         return User.query.get(int(user_id))
     
     # Register blueprints
+    from app.routes.main import main_bp
     from app.routes.auth import auth_bp
     from app.routes.bot import bot_bp
     from app.routes.ai import ai_bp
     from app.routes.telegram import telegram_bp
     from app.routes.kb import kb_bp
     from app.routes.payment import payment_bp
+    from app.routes.bot_control import bot_control_bp
     from app.routes.admin import admin_bp
+    app.register_blueprint(main_bp)
     app.register_blueprint(auth_bp)
-    app.register_blueprint(bot_bp)
+    app.register_blueprint(bot_bp, url_prefix='/bots')
     app.register_blueprint(ai_bp)
-    app.register_blueprint(telegram_bp)
-    app.register_blueprint(kb_bp)
-    app.register_blueprint(payment_bp)
+    app.register_blueprint(telegram_bp, url_prefix='/telegram')
+    app.register_blueprint(kb_bp, url_prefix='/kb')
+    app.register_blueprint(payment_bp, url_prefix='/payment')
+    app.register_blueprint(bot_control_bp)
     app.register_blueprint(admin_bp)
     
     # Create database tables

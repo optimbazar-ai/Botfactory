@@ -55,6 +55,10 @@
                             <strong>Token:</strong> 
                             <span class="badge bg-success">✅ Configured</span>
                         </div>
+                        <div class="mb-2">
+                            <strong>Status:</strong> 
+                            <span id="status-{{ bot.id }}" class="badge bg-secondary">🔄 Tekshirilmoqda...</span>
+                        </div>
                         {% else %}
                         <div class="mb-2">
                             <strong>Token:</strong> 
@@ -81,15 +85,40 @@
                                 </div>
                             </div>
                             {% if bot.telegram_token_1 %}
-                            <a href="{{ url_for('telegram.setup_webhook', bot_id=bot.id) }}" class="btn btn-sm btn-primary">
-                                🔗 Setup Webhook
-                            </a>
-                            <a href="{{ url_for('telegram.test_bot', bot_id=bot.id) }}" class="btn btn-sm btn-success">
-                                🧪 Test Bot
-                            </a>
+                            <!-- Bot boshqaruvi tugmalari -->
+                            <div class="row g-2 mb-2">
+                                <div class="col-6">
+                                    <form method="POST" action="{{ url_for('bot_control.start_bot', bot_id=bot.id) }}" style="display: inline;">
+                                        <button type="submit" id="start-btn-{{ bot.id }}" class="btn btn-sm btn-success w-100" disabled>
+                                            🚀 Ishga tushirish
+                                        </button>
+                                    </form>
+                                </div>
+                                <div class="col-6">
+                                    <form method="POST" action="{{ url_for('bot_control.stop_bot', bot_id=bot.id) }}" style="display: inline;">
+                                        <button type="submit" id="stop-btn-{{ bot.id }}" class="btn btn-sm btn-danger w-100" disabled>
+                                            🛑 To'xtatish
+                                        </button>
+                                    </form>
+                                </div>
+                            </div>
+                            
+                            <!-- Qo'shimcha tugmalar -->
+                            <div class="row g-2">
+                                <div class="col-6">
+                                    <a href="{{ url_for('telegram.test_bot', bot_id=bot.id) }}" class="btn btn-sm btn-outline-success w-100">
+                                        🧪 Test
+                                    </a>
+                                </div>
+                                <div class="col-6">
+                                    <a href="{{ url_for('telegram.setup_webhook', bot_id=bot.id) }}" class="btn btn-sm btn-outline-primary w-100">
+                                        🔗 Webhook
+                                    </a>
+                                </div>
+                            </div>
                             {% else %}
                             <div class="alert alert-warning mb-0 small">
-                                <strong>⚠️ Setup Required:</strong> Add Telegram token to activate this bot
+                                <strong>⚠️ Setup kerak:</strong> Telegram token qo'shing
                             </div>
                             {% endif %}
                         </div>
@@ -115,4 +144,53 @@
         {% endif %}
     </div>
 </div>
+{% endblock %}
+
+{% block scripts %}
+<script>
+// Bot statuslarini yangilash
+function updateBotStatuses() {
+    fetch('/bots/status')
+        .then(response => response.json())
+        .then(data => {
+            data.bots.forEach(bot => {
+                const statusElement = document.getElementById(`status-${bot.bot_id}`);
+                const startBtn = document.getElementById(`start-btn-${bot.bot_id}`);
+                const stopBtn = document.getElementById(`stop-btn-${bot.bot_id}`);
+                
+                if (statusElement) {
+                    if (bot.is_running) {
+                        statusElement.className = 'badge bg-success';
+                        statusElement.textContent = '🟢 Ishlamoqda';
+                        
+                        if (startBtn) startBtn.disabled = true;
+                        if (stopBtn) stopBtn.disabled = false;
+                    } else {
+                        statusElement.className = 'badge bg-secondary';
+                        statusElement.textContent = '⚫ To\'xtatilgan';
+                        
+                        if (startBtn) startBtn.disabled = false;
+                        if (stopBtn) stopBtn.disabled = true;
+                    }
+                }
+            });
+        })
+        .catch(error => {
+            console.error('Status yangilashda xatolik:', error);
+        });
+}
+
+// Sahifa yuklanganda va har 5 soniyada yangilash
+document.addEventListener('DOMContentLoaded', function() {
+    updateBotStatuses();
+    setInterval(updateBotStatuses, 5000);
+});
+
+// Form submit'dan keyin yangilash
+document.querySelectorAll('form').forEach(form => {
+    form.addEventListener('submit', function() {
+        setTimeout(updateBotStatuses, 1000);
+    });
+});
+</script>
 {% endblock %}

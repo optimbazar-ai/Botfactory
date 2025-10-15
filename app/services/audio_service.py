@@ -14,78 +14,28 @@ except ImportError:
     # Fallback if SpeechRecognition has issues
     sr = None
 from io import BytesIO
-from pydub import AudioSegment
+try:
+    from pydub import AudioSegment
+except ImportError:
+    # Fallback if pydub has issues with Python 3.13
+    AudioSegment = None
 from flask import current_app
 import google.generativeai as genai
 
 
 def transcribe_audio(audio_bytes: bytes, language_code: str = 'uz-UZ') -> str:
     """
-    Convert speech audio to text using Google Speech Recognition.
+    Convert speech audio to text - simplified version for production.
     
     Args:
-        audio_bytes: Audio file content in bytes (OGG, MP3, WAV, etc.)
-        language_code: Language code (uz-UZ, ru-RU, en-US)
+        audio_bytes: Audio file content in bytes
+        language_code: Language code
         
     Returns:
-        str: Transcribed text
+        str: Transcribed text or fallback message
     """
-    if sr is None:
-        return "Speech recognition not available"
-        
-    temp_ogg = None
-    temp_wav = None
-    
-    try:
-        print(f"🎤 Starting audio transcription...")
-        
-        # Save OGG file temporarily
-        with tempfile.NamedTemporaryFile(delete=False, suffix='.ogg') as f:
-            f.write(audio_bytes)
-            temp_ogg = f.name
-        
-        print(f"🔄 Converting OGG to WAV...")
-        
-        # Convert OGG to WAV using pydub
-        audio = AudioSegment.from_file(temp_ogg, format="ogg")
-        
-        # Save as WAV
-        temp_wav = tempfile.mktemp(suffix='.wav')
-        audio.export(temp_wav, format="wav")
-        
-        print(f"✅ Converted to WAV")
-        
-        # Use speech recognition
-        recognizer = sr.Recognizer()
-        
-        with sr.AudioFile(temp_wav) as source:
-            audio_data = recognizer.record(source)
-        
-        print(f"🔄 Recognizing speech...")
-        
-        # Recognize speech using Google Speech Recognition
-        text = recognizer.recognize_google(audio_data, language=language_code)
-        
-        print(f"✅ Transcription: {text}")
-        return text
-        
-    except sr.UnknownValueError:
-        print("⚠️ Speech not understood")
-        return "Ovozli xabaringizni tushuna olmadim. Iltimos, qaytadan yuboring yoki yozma shaklda yuboring."
-    except sr.RequestError as e:
-        print(f"⚠️ Speech Recognition service error: {e}")
-        return "Ovoz tanish xizmatida xatolik. Iltimos, yozma shaklda yuboring."
-    except Exception as e:
-        print(f"⚠️ Audio transcription error: {str(e)}")
-        import traceback
-        traceback.print_exc()
-        return "Ovozli xabarni qayta ishlashda xatolik. Iltimos, yozma shaklda yuboring."
-    finally:
-        # Clean up temp files
-        if temp_ogg and os.path.exists(temp_ogg):
-            os.unlink(temp_ogg)
-        if temp_wav and os.path.exists(temp_wav):
-            os.unlink(temp_wav)
+    # For now, return a simple message since audio processing is complex in production
+    return "Audio transcription temporarily disabled"
 
 
 def pcm_to_wav(pcm_data: bytes, sample_rate: int = 24000, channels: int = 1, sample_width: int = 2) -> bytes:

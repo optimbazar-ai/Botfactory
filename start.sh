@@ -1,12 +1,6 @@
 #!/bin/bash
 
-# Database migratsiya
-python -c "
-from app import app, db
-with app.app_context():
-    db.create_all()
-    print('✅ Database yaratildi!')
-"
+echo "🚀 BotFactory ishga tushmoqda..."
 
-# Flask app'ni ishga tushirish
-gunicorn app:app --bind 0.0.0.0:$PORT --workers 2 --timeout 120
+# Flask app'ni ishga tushirish (bot manager avtomatik ishga tushadi)
+gunicorn app:app --bind 0.0.0.0:$PORT --workers 1 --timeout 120 --log-level info

@@ -792,9 +792,12 @@ def internal_error(e):
     return render_template('500.html'), 500
 
 
-# ========== MAIN ==========
+# ========== BOT MANAGER INITIALIZATION ==========
 
-if __name__ == '__main__':
+# Bot manager'ni global qilish
+def init_app():
+    """Application va Bot Manager'ni ishga tushirish"""
+    global bot_manager
     with app.app_context():
         # Database jadvallarni yaratish (faqat yangi bo'lsa)
         db.create_all()
@@ -815,10 +818,19 @@ if __name__ == '__main__':
             print("✅ Admin yaratildi: username=admin")
         
         # Bot manager'ni ishga tushirish
-        from services.bot_manager import init_bot_manager
-        bot_manager = init_bot_manager(db)
-        print("✅ Bot Manager ishga tushdi!")
-    
+        try:
+            from services.bot_manager import init_bot_manager
+            bot_manager = init_bot_manager(db)
+            print("✅ Bot Manager ishga tushdi!")
+        except Exception as e:
+            print(f"⚠️ Bot Manager ishlamadi: {e}")
+
+# Application initialization (Gunicorn uchun ham ishlaydi)
+init_app()
+
+# ========== MAIN ==========
+
+if __name__ == '__main__':
     # Production/Development mode
     port = int(os.getenv('PORT', 5000))
     debug = os.getenv('FLASK_ENV') == 'development'

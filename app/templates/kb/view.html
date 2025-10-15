@@ -1,0 +1,64 @@
+{% extends "base.html" %}
+
+{% block title %}View Knowledge Base - {{ kb.filename }}{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="mb-4">
+            <h2>👁️ View Knowledge Base File</h2>
+            <p class="text-muted">Bot: <strong>{{ bot.name }}</strong></p>
+            <div class="btn-group">
+                <a href="{{ url_for('kb.manage_kb', bot_id=bot.id) }}" class="btn btn-sm btn-outline-secondary">← Back to Knowledge Base</a>
+                <a href="{{ url_for('bot.list_bots') }}" class="btn btn-sm btn-outline-secondary">My Bots</a>
+            </div>
+        </div>
+
+        <!-- File Info -->
+        <div class="card mb-4">
+            <div class="card-header bg-info text-white">
+                <h5 class="mb-0">📄 File Information</h5>
+            </div>
+            <div class="card-body">
+                <div class="row">
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Filename:</strong> {{ kb.filename }}</p>
+                        <p class="mb-2"><strong>File Type:</strong> <span class="badge bg-secondary">{{ kb.file_type.upper() }}</span></p>
+                        <p class="mb-0"><strong>File Size:</strong> {{ kb.get_size_display() }}</p>
+                    </div>
+                    <div class="col-md-6">
+                        <p class="mb-2"><strong>Uploaded:</strong> {{ kb.uploaded_at.strftime('%Y-%m-%d %H:%M') }}</p>
+                        <p class="mb-2"><strong>Characters:</strong> {{ kb.content|length }}</p>
+                        <p class="mb-0"><strong>Lines:</strong> {{ kb.content.split('\n')|length }}</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- File Content -->
+        <div class="card mb-4">
+            <div class="card-header bg-success text-white">
+                <h5 class="mb-0">📝 Content</h5>
+            </div>
+            <div class="card-body">
+                <div class="bg-light p-3 rounded" style="max-height: 600px; overflow-y: auto;">
+                    <pre style="white-space: pre-wrap; word-wrap: break-word; margin: 0;">{{ kb.content }}</pre>
+                </div>
+            </div>
+        </div>
+
+        <!-- Actions -->
+        <div class="card">
+            <div class="card-body">
+                <h6>Actions:</h6>
+                <form method="POST" action="{{ url_for('kb.delete_kb', bot_id=bot.id, kb_id=kb.id) }}" onsubmit="return confirm('Are you sure you want to delete this knowledge base file?');">
+                    <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                    <button type="submit" class="btn btn-danger">
+                        🗑️ Delete This File
+                    </button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,248 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Dashboard{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-4">
+            <h2>🛡️ Admin Dashboard</h2>
+            <p class="text-muted">System overview and statistics</p>
+        </div>
+
+        <!-- Statistics Cards -->
+        <div class="row mb-4">
+            <!-- Users Card -->
+            <div class="col-md-3 mb-3">
+                <div class="card bg-primary text-white">
+                    <div class="card-body">
+                        <h3>{{ total_users }}</h3>
+                        <p class="mb-0">Total Users</p>
+                        <small>{{ active_users }} active</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Bots Card -->
+            <div class="col-md-3 mb-3">
+                <div class="card bg-success text-white">
+                    <div class="card-body">
+                        <h3>{{ total_bots }}</h3>
+                        <p class="mb-0">Total Bots</p>
+                        <small>{{ active_bots }} active</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Payments Card -->
+            <div class="col-md-3 mb-3">
+                <div class="card bg-info text-white">
+                    <div class="card-body">
+                        <h3>{{ completed_payments }}</h3>
+                        <p class="mb-0">Payments</p>
+                        <small>{{ total_payments }} total</small>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Revenue Card -->
+            <div class="col-md-3 mb-3">
+                <div class="card bg-warning text-dark">
+                    <div class="card-body">
+                        <h3>{{ "{:,}".format(total_revenue) }}</h3>
+                        <p class="mb-0">Revenue (UZS)</p>
+                        <small>Completed payments</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Charts Row -->
+        <div class="row mb-4">
+            <!-- Subscription Distribution -->
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Subscription Distribution</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="subscriptionChart"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Monthly Registrations -->
+            <div class="col-md-6 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h5 class="mb-0">Monthly Registrations</h5>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="registrationChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Quick Links -->
+        <div class="row mb-4">
+            <div class="col-md-4 mb-3">
+                <a href="{{ url_for('admin.users') }}" class="text-decoration-none">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>👥</h3>
+                            <h5>Manage Users</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a href="{{ url_for('admin.bots') }}" class="text-decoration-none">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>🤖</h3>
+                            <h5>Manage Bots</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+            <div class="col-md-4 mb-3">
+                <a href="{{ url_for('admin.payments') }}" class="text-decoration-none">
+                    <div class="card">
+                        <div class="card-body text-center">
+                            <h3>💳</h3>
+                            <h5>View Payments</h5>
+                        </div>
+                    </div>
+                </a>
+            </div>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="row">
+            <!-- Recent Users -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Recent Users</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% for user in recent_users %}
+                            <li class="list-group-item">
+                                <strong>{{ user.username }}</strong>
+                                <br><small class="text-muted">{{ user.created_at.strftime('%Y-%m-%d') }}</small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Payments -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Recent Payments</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% for payment in recent_payments %}
+                            <li class="list-group-item">
+                                <strong>{{ "{:,}".format(payment.amount) }} UZS</strong>
+                                <span class="badge bg-{{ payment.get_status_badge() }}">{{ payment.status }}</span>
+                                <br><small class="text-muted">{{ payment.user.username }} - {{ payment.created_at.strftime('%Y-%m-%d') }}</small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Bots -->
+            <div class="col-md-4 mb-3">
+                <div class="card">
+                    <div class="card-header">
+                        <h6 class="mb-0">Recent Bots</h6>
+                    </div>
+                    <div class="card-body p-0">
+                        <ul class="list-group list-group-flush">
+                            {% for bot in recent_bots %}
+                            <li class="list-group-item">
+                                <strong>{{ bot.name }}</strong>
+                                <br><small class="text-muted">{{ bot.user.username }} - {{ bot.created_at.strftime('%Y-%m-%d') }}</small>
+                            </li>
+                            {% endfor %}
+                        </ul>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}
+
+{% block extra_js %}
+<!-- Chart.js from CDN -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+
+<script>
+// Subscription Distribution Chart
+const subscriptionCtx = document.getElementById('subscriptionChart').getContext('2d');
+new Chart(subscriptionCtx, {
+    type: 'doughnut',
+    data: {
+        labels: ['Free', 'Starter', 'Basic', 'Premium'],
+        datasets: [{
+            data: [{{ free_users }}, {{ starter_users }}, {{ basic_users }}, {{ premium_users }}],
+            backgroundColor: [
+                '#6c757d',
+                '#28a745',
+                '#17a2b8',
+                '#ffc107'
+            ]
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                position: 'bottom'
+            }
+        }
+    }
+});
+
+// Monthly Registration Chart
+const registrationCtx = document.getElementById('registrationChart').getContext('2d');
+new Chart(registrationCtx, {
+    type: 'line',
+    data: {
+        labels: [{% for item in monthly_data %}'{{ item.month }}'{% if not loop.last %}, {% endif %}{% endfor %}],
+        datasets: [{
+            label: 'New Users',
+            data: [{% for item in monthly_data %}{{ item.count }}{% if not loop.last %}, {% endif %}{% endfor %}],
+            borderColor: '#007bff',
+            backgroundColor: 'rgba(0, 123, 255, 0.1)',
+            tension: 0.4
+        }]
+    },
+    options: {
+        responsive: true,
+        plugins: {
+            legend: {
+                display: false
+            }
+        },
+        scales: {
+            y: {
+                beginAtZero: true,
+                ticks: {
+                    stepSize: 1
+                }
+            }
+        }
+    }
+});
+</script>
+{% endblock %}

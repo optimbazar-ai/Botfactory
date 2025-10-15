@@ -1,0 +1,154 @@
+{% extends "base.html" %}
+
+{% block title %}Test AI - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="mb-4">
+            <h2>🤖 Test AI Integration</h2>
+            <p class="text-muted">Test the Google Gemini AI integration with custom messages and system prompts</p>
+        </div>
+
+        <div class="row">
+            <!-- Input Form -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-primary text-white">
+                        <h5 class="mb-0">Input</h5>
+                    </div>
+                    <div class="card-body">
+                        <form method="POST" action="{{ url_for('ai.test_ai') }}">
+                            <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                            
+                            <div class="mb-3">
+                                <label for="message" class="form-label">Your Message <span class="text-danger">*</span></label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="message" 
+                                    name="message" 
+                                    rows="4" 
+                                    placeholder="Type your message here..."
+                                    required
+                                >{{ response.user_message if response else '' }}</textarea>
+                                <div class="form-text">The AI will auto-detect the language and respond accordingly</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="system_prompt" class="form-label">System Prompt (Optional)</label>
+                                <textarea 
+                                    class="form-control" 
+                                    id="system_prompt" 
+                                    name="system_prompt" 
+                                    rows="3" 
+                                    placeholder="e.g., You are a helpful coding assistant..."
+                                >{{ response.system_prompt if response else '' }}</textarea>
+                                <div class="form-text">Instructions for how the AI should behave</div>
+                            </div>
+
+                            <div class="mb-3">
+                                <label for="language" class="form-label">Preferred Language</label>
+                                <select class="form-select" id="language" name="language">
+                                    <option value="uz" {% if response and response.language == 'uz' %}selected{% endif %}>Uzbek (uz)</option>
+                                    <option value="ru" {% if response and response.language == 'ru' %}selected{% endif %}>Russian (ru)</option>
+                                    <option value="en" {% if response and response.language == 'en' %}selected{% endif %}>English (en)</option>
+                                </select>
+                                <div class="form-text">Fallback language if auto-detection fails</div>
+                            </div>
+
+                            {% if error %}
+                            <div class="alert alert-danger">
+                                {{ error }}
+                            </div>
+                            {% endif %}
+
+                            <div class="d-grid">
+                                <button type="submit" class="btn btn-primary btn-lg">
+                                    Send to AI
+                                </button>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+
+                <div class="card mt-3">
+                    <div class="card-body">
+                        <h6 class="card-title">💡 Try These Examples:</h6>
+                        <ul class="mb-0">
+                            <li><strong>Uzbek:</strong> "Salom! O'zingni qanday his qilyapsan?"</li>
+                            <li><strong>Russian:</strong> "Привет! Как дела?"</li>
+                            <li><strong>English:</strong> "Hello! How are you today?"</li>
+                            <li><strong>With System Prompt:</strong> "You are a poet" + "Write me a haiku"</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- AI Response -->
+            <div class="col-lg-6 mb-4">
+                <div class="card shadow">
+                    <div class="card-header bg-success text-white">
+                        <h5 class="mb-0">AI Response</h5>
+                    </div>
+                    <div class="card-body">
+                        {% if response %}
+                            <div class="mb-3">
+                                <h6 class="text-muted">User Message:</h6>
+                                <div class="p-3 bg-light rounded">
+                                    {{ response.user_message }}
+                                </div>
+                            </div>
+
+                            {% if response.system_prompt %}
+                            <div class="mb-3">
+                                <h6 class="text-muted">System Prompt:</h6>
+                                <div class="p-2 bg-info bg-opacity-10 rounded small">
+                                    {{ response.system_prompt }}
+                                </div>
+                            </div>
+                            {% endif %}
+
+                            <div class="mb-3">
+                                <h6 class="text-muted">Language:</h6>
+                                <span class="badge bg-secondary">{{ response.language.upper() }}</span>
+                            </div>
+
+                            <hr>
+
+                            <div>
+                                <h6 class="text-success">AI Response:</h6>
+                                <div class="p-3 bg-success bg-opacity-10 rounded" style="white-space: pre-wrap;">{{ response.ai_response }}</div>
+                            </div>
+                        {% else %}
+                            <div class="text-center text-muted py-5">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" class="bi bi-chat-dots mb-3" viewBox="0 0 16 16">
+                                    <path d="M5 8a1 1 0 1 1-2 0 1 1 0 0 1 2 0m4 0a1 1 0 1 1-2 0 1 1 0 0 1 2 0m3 1a1 1 0 1 0 0-2 1 1 0 0 0 0 2"/>
+                                    <path d="m2.165 15.803.02-.004c1.83-.363 2.948-.842 3.468-1.105A9 9 0 0 0 8 15c4.418 0 8-3.134 8-7s-3.582-7-8-7-8 3.134-8 7c0 1.76.743 3.37 1.97 4.6a10.4 10.4 0 0 1-.524 2.318l-.003.011a11 11 0 0 1-.244.637c-.079.186.074.394.273.362a22 22 0 0 0 .693-.125m.8-3.108a1 1 0 0 0-.287-.801C1.618 10.83 1 9.468 1 8c0-3.192 3.004-6 7-6s7 2.808 7 6-3.004 6-7 6a8 8 0 0 1-2.088-.272 1 1 0 0 0-.711.074c-.387.196-1.24.57-2.634.893a11 11 0 0 0 .398-2"/>
+                                </svg>
+                                <p>AI response will appear here</p>
+                                <p class="small">Send a message to get started</p>
+                            </div>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="alert alert-info">
+            <h6>ℹ️ About This Test Page</h6>
+            <ul class="mb-0">
+                <li>Uses Google Gemini 1.5 Flash model</li>
+                <li>Auto-detects input language (uz/ru/en)</li>
+                <li>Returns plain text without markdown formatting</li>
+                <li>Includes emojis for friendly responses</li>
+                <li>Handles API errors gracefully with fallback messages</li>
+            </ul>
+        </div>
+
+        <div class="alert alert-warning">
+            <h6>⚠️ Note</h6>
+            <p class="mb-0">This is a test interface. Telegram webhook integration is not yet implemented. This page tests the AI service only.</p>
+        </div>
+    </div>
+</div>
+{% endblock %}

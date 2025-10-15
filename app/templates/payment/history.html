@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Payment History{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-10 mx-auto">
+        <div class="mb-4">
+            <h2>📜 To'lovlar tarixi</h2>
+            <a href="{{ url_for('payment.subscribe') }}" class="btn btn-sm btn-outline-secondary">← Obuna</a>
+        </div>
+
+        {% if payments %}
+        <div class="card">
+            <div class="card-body">
+                <div class="table-responsive">
+                    <table class="table table-hover">
+                        <thead>
+                            <tr>
+                                <th>ID</th>
+                                <th>Miqdor</th>
+                                <th>Usul</th>
+                                <th>Obuna</th>
+                                <th>Holat</th>
+                                <th>Sana</th>
+                                <th>Amallar</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for payment in payments %}
+                            <tr>
+                                <td>#{{ payment.id }}</td>
+                                <td>{{ payment.get_amount_display() }}</td>
+                                <td><span class="badge bg-secondary">{{ payment.payment_method.upper() }}</span></td>
+                                <td>{{ payment.subscription_type.capitalize() }}</td>
+                                <td><span class="badge bg-{{ payment.get_status_badge() }}">{{ payment.status }}</span></td>
+                                <td>{{ payment.created_at.strftime('%Y-%m-%d %H:%M') }}</td>
+                                <td>
+                                    <a href="{{ url_for('payment.payment_status', payment_id=payment.id) }}" class="btn btn-sm btn-outline-info">Ko'rish</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+        {% else %}
+        <div class="text-center py-5">
+            <p class="text-muted">Hali to'lovlar yo'q</p>
+            <a href="{{ url_for('payment.subscribe') }}" class="btn btn-primary">Obuna bo'lish</a>
+        </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

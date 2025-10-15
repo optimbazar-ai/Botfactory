@@ -1,0 +1,169 @@
+{% extends "base.html" %}
+
+{% block title %}Create Your Chatbot - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-lg-8 mx-auto">
+        <div class="text-center mb-5">
+            <h1 class="display-4 text-primary mb-3">🤖 Create Your Chatbot!</h1>
+            <p class="lead">Follow these 3 easy steps to make your own smart bot</p>
+            
+            <!-- Progress Steps -->
+            <div class="row mb-4">
+                <div class="col-4">
+                    <div class="text-center">
+                        <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                            <span class="fw-bold">1</span>
+                        </div>
+                        <p class="small fw-bold text-primary">Bot Info</p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center">
+                        <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                            <span class="fw-bold">2</span>
+                        </div>
+                        <p class="small fw-bold text-success">Connect Telegram</p>
+                    </div>
+                </div>
+                <div class="col-4">
+                    <div class="text-center">
+                        <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-2" style="width: 50px; height: 50px;">
+                            <span class="fw-bold">3</span>
+                        </div>
+                        <p class="small fw-bold text-warning">Ready!</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="card shadow-lg border-0">
+            <div class="card-header text-center py-4" style="background: #1a1a1a;">
+                <h3 class="mb-0 text-white">🎯 Step 1: Tell Us About Your Bot</h3>
+            </div>
+            <div class="card-body p-5">
+                <form method="POST" action="{{ url_for('bot.new_bot') }}" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 text-dark">🤖 What's your bot's name?</label>
+                        <input type="text" name="name" class="form-control form-control-lg" placeholder="My Awesome Bot" required>
+                        <div class="form-text text-muted">Give your bot a fun name like "Helper Bot" or "My Friend"</div>
+                        {% if form.name.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.name.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 text-dark">📝 What does your bot do?</label>
+                        <textarea name="description" class="form-control form-control-lg" rows="3" placeholder="My bot helps people with questions and is very friendly!"></textarea>
+                        <div class="form-text text-muted">Tell people what your bot is for (optional)</div>
+                        {% if form.description.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.description.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row">
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold fs-5 text-dark">🌍 What language should your bot speak?</label>
+                            <select name="language" class="form-select form-select-lg" required>
+                                <option value="en">🇬🇧 English</option>
+                                <option value="ru">🇷🇺 Russian</option>
+                                <option value="uz">🇺🇿 Uzbek</option>
+                                <option value="es">🇪🇸 Spanish</option>
+                            </select>
+                            <div class="form-text text-muted">Your bot can talk in this language</div>
+                        </div>
+
+                        <div class="col-md-6 mb-4">
+                            <label class="form-label fw-bold fs-5 text-dark">📱 Where will your bot live?</label>
+                            <select name="platform" class="form-select form-select-lg" required>
+                                <option value="telegram">📱 Telegram</option>
+                            </select>
+                            <div class="form-text text-muted">More apps coming soon!</div>
+                        </div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 text-dark">🎭 How should your bot behave?</label>
+                        <textarea name="system_prompt" class="form-control form-control-lg" rows="4" placeholder="You are a friendly and helpful assistant. Always be kind and try to help people with their questions. Use simple words and be cheerful!"></textarea>
+                        <div class="form-text text-muted">Tell your bot how to act - be friendly, helpful, funny, etc. (optional)</div>
+                        {% if form.system_prompt.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.system_prompt.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <!-- Step 2 Header -->
+                    <div class="bg-success text-white rounded-3 p-3 mb-4">
+                        <h4 class="mb-0">🔗 Step 2: Connect to Telegram</h4>
+                        <p class="mb-0 mt-2">Get your bot's special codes from Telegram</p>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <div class="alert alert-info">
+                            <h6 class="fw-bold">📋 How to get your Telegram token:</h6>
+                            <ol class="mb-0">
+                                <li>Open Telegram and search for <strong>@BotFather</strong></li>
+                                <li>Send <code>/newbot</code> to create a new bot</li>
+                                <li>Follow the instructions and copy your token</li>
+                                <li>Paste it below!</li>
+                            </ol>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-bold fs-5 text-dark">🔑 Your Bot Token (Required)</label>
+                            <input type="text" name="telegram_token_1" class="form-control form-control-lg" placeholder="1234567890:ABCdefGHIjklMNOpqrsTUVwxyz" required>
+                            <div class="form-text text-muted">
+                                This is like your bot's ID card - <a href="https://t.me/BotFather" target="_blank" class="fw-bold">Get it from @BotFather</a>
+                            </div>
+                            {% if form.telegram_token_1.errors %}
+                                <div class="text-danger mt-2">
+                                    {% for error in form.telegram_token_1.errors %}
+                                        {{ error }}
+                                    {% endfor %}
+                                </div>
+                            {% endif %}
+                        </div>
+                    </div>
+
+                    <!-- Step 3 Header -->
+                    <div class="bg-warning text-dark rounded-3 p-3 mb-4">
+                        <h4 class="mb-0">🎉 Step 3: Create Your Bot!</h4>
+                        <p class="mb-0 mt-2">Click the button below and your bot will be ready!</p>
+                    </div>
+                    
+                    <div class="d-grid gap-3">
+                        <button type="submit" class="btn btn-success btn-lg py-3 fw-bold" style="font-size: 1.2rem;">
+                            🚀 Create My Chatbot Now!
+                        </button>
+                        <a href="{{ url_for('bot.list_bots') }}" class="btn btn-outline-secondary">← Go Back</a>
+                    </div>
+                </form>
+            </div>
+        </div>
+
+        <div class="alert alert-success mt-4">
+            <h6 class="fw-bold">🎯 What happens next?</h6>
+            <ul class="mb-0">
+                <li>✅ Your bot will be created instantly</li>
+                <li>✅ It will be connected to Telegram automatically</li>
+                <li>✅ People can start chatting with it right away!</li>
+                <li>✅ Your bot will be smart and can talk with voice</li>
+            </ul>
+        </div>
+    </div>
+</div>
+{% endblock %}

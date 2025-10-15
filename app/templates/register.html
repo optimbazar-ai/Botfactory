@@ -1,0 +1,117 @@
+{% extends "base.html" %}
+
+{% block title %}Join BotFactory - Create Your Free Account!{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-lg-6 col-md-8">
+        <div class="text-center mb-4">
+            <h1 class="display-5 fw-bold text-primary mb-3">🎆 Join BotFactory!</h1>
+            <p class="lead">Create your free account and start building chatbots in minutes!</p>
+        </div>
+        
+        <div class="card shadow-lg border-0">
+            <div class="card-header text-center py-4" style="background: #1a1a1a;">
+                <h3 class="mb-0 text-white">🚀 Create Free Account</h3>
+                <p class="mb-0 mt-2 text-white">It's 100% free and takes 30 seconds!</p>
+            </div>
+            <div class="card-body p-5">
+                <form method="POST" action="{{ url_for('auth.register') }}" novalidate>
+                    {{ form.hidden_tag() }}
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 text-dark">👤 Choose a Username</label>
+                        <input type="text" name="username" class="form-control form-control-lg" placeholder="cooluser123" required>
+                        <div class="form-text text-muted">This is your unique name - make it fun!</div>
+                        {% if form.username.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.username.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 text-dark">📧 Your Email Address</label>
+                        <input type="email" name="email" class="form-control form-control-lg" placeholder="your@email.com" required>
+                        <div class="form-text text-muted">We'll never spam you - promise!</div>
+                        {% if form.email.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.email.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 text-dark">📱 Your Phone Number</label>
+                        <input type="tel" name="phone" class="form-control form-control-lg" placeholder="+1 (555) 123-4567">
+                        <div class="form-text text-muted">Optional - for account security (we won't call you!)</div>
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 text-dark">🔒 Create a Password</label>
+                        <input type="password" name="password" class="form-control form-control-lg" placeholder="Make it strong!" required>
+                        <div class="form-text text-muted">At least 6 characters - mix letters and numbers</div>
+                        {% if form.password.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.password.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="mb-4">
+                        <label class="form-label fw-bold fs-5 text-dark">✅ Confirm Your Password</label>
+                        <input type="password" name="password_confirm" class="form-control form-control-lg" placeholder="Type it again" required>
+                        <div class="form-text text-muted">Just to make sure you got it right!</div>
+                        {% if form.password_confirm.errors %}
+                            <div class="text-danger mt-2">
+                                {% for error in form.password_confirm.errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        {% endif %}
+                    </div>
+                    
+                    <div class="d-grid mb-3">
+                        <button type="submit" class="btn btn-success btn-lg py-3 fw-bold" style="font-size: 1.2rem;">
+                            🎉 Create My Free Account!
+                        </button>
+                    </div>
+                </form>
+            </div>
+            <div class="card-footer text-center py-4">
+                <p class="mb-0 fs-5">Already have an account? <a href="{{ url_for('auth.login') }}" class="fw-bold text-decoration-none">🔑 Sign In Here!</a></p>
+            </div>
+        </div>
+        
+        <div class="text-center mt-4">
+            <div class="bg-light rounded-3 p-4">
+                <h5 class="fw-bold text-success mb-3">🎁 What You Get For Free:</h5>
+                <div class="row text-center">
+                    <div class="col-6 col-md-3 mb-2">
+                        <div class="text-primary">🤖</div>
+                        <small class="fw-bold">1 Smart Bot</small>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <div class="text-success">🎵</div>
+                        <small class="fw-bold">Voice Messages</small>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <div class="text-warning">🌍</div>
+                        <small class="fw-bold">4 Languages</small>
+                    </div>
+                    <div class="col-6 col-md-3 mb-2">
+                        <div class="text-info">⚡</div>
+                        <small class="fw-bold">24/7 Support</small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

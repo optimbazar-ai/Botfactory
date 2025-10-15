@@ -1,0 +1,126 @@
+{% extends "base.html" %}
+
+{% block title %}Subscribe - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row">
+    <div class="col-12">
+        <div class="mb-4">
+            <h2>💳 Subscription Plans</h2>
+            <p class="text-muted">Choose the perfect plan for your needs</p>
+        </div>
+
+        <!-- Current Subscription -->
+        {% if current_plan != 'free' %}
+        <div class="alert alert-info mb-4">
+            <h5>📊 Current Subscription</h5>
+            <p class="mb-0">
+                <strong>Plan:</strong> {{ current_plan.capitalize() }} | 
+                <strong>Status:</strong> {{ current_user.get_subscription_status() }}
+                {% if subscription_active %}
+                <span class="badge bg-success ms-2">Active</span>
+                {% else %}
+                <span class="badge bg-danger ms-2">Expired</span>
+                {% endif %}
+            </p>
+        </div>
+        {% endif %}
+
+        <!-- Pricing Plans -->
+        <div class="row mb-4">
+            {% for plan_key, plan in plans.items() %}
+            <div class="col-md-6 col-lg-3 mb-4">
+                <div class="card h-100 {% if plan_key == current_plan %}border-primary{% endif %}">
+                    <div class="card-header {% if plan_key == 'premium' %}bg-warning{% elif plan_key == 'basic' %}bg-info text-white{% elif plan_key == 'starter' %}bg-success text-white{% else %}bg-secondary text-white{% endif %}">
+                        <h4 class="mb-0">{{ plan.name_uz }}</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="mb-3">
+                            {% if plan.price == 0 %}
+                                <span class="text-success">Bepul</span>
+                            {% else %}
+                                {{ "{:,}".format(plan.price) }} <small>so'm</small>
+                            {% endif %}
+                        </h2>
+                        <p class="text-muted small">{{ plan.max_bots }} ta bot gacha</p>
+                        
+                        <hr>
+                        
+                        <ul class="list-unstyled text-start mb-4">
+                            {% for feature in plan.features_uz %}
+                            <li class="mb-2">✓ {{ feature }}</li>
+                            {% endfor %}
+                        </ul>
+                        
+                        {% if plan_key == current_plan and subscription_active %}
+                            <button class="btn btn-outline-secondary w-100" disabled>Joriy plan</button>
+                        {% elif plan_key == 'free' %}
+                            {% if current_plan != 'free' %}
+                                <button class="btn btn-outline-secondary w-100" disabled>Downgrade mavjud emas</button>
+                            {% else %}
+                                <button class="btn btn-outline-secondary w-100" disabled>Joriy plan</button>
+                            {% endif %}
+                        {% else %}
+                            <!-- Test Payment (Demo) -->
+                            <form method="POST" action="{{ url_for('payment.create_test_payment') }}" class="mb-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <input type="hidden" name="subscription_type" value="{{ plan_key }}">
+                                <button type="submit" class="btn btn-warning w-100">
+                                    🧪 Test to'lov
+                                </button>
+                            </form>
+                            
+                            <!-- PayMe -->
+                            <form method="POST" action="{{ url_for('payment.create_payme_payment') }}" class="mb-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <input type="hidden" name="subscription_type" value="{{ plan_key }}">
+                                <button type="submit" class="btn btn-primary w-100">
+                                    💳 PayMe orqali
+                                </button>
+                            </form>
+                            
+                            <!-- Click -->
+                            <form method="POST" action="{{ url_for('payment.create_click_payment') }}" class="mb-2">
+                                <input type="hidden" name="csrf_token" value="{{ csrf_token() }}"/>
+                                <input type="hidden" name="subscription_type" value="{{ plan_key }}">
+                                <button type="submit" class="btn btn-success w-100">
+                                    💳 Click orqali
+                                </button>
+                            </form>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+
+        <!-- Payment Info -->
+        <div class="card mb-4">
+            <div class="card-header">
+                <h5 class="mb-0">💡 To'lov haqida ma'lumot</h5>
+            </div>
+            <div class="card-body">
+                <h6>Qo'llab-quvvatlanadigan to'lov tizimlari:</h6>
+                <ul>
+                    <li><strong>PayMe</strong> - Bank kartalari va PayMe hisobi orqali</li>
+                    <li><strong>Click</strong> - Bank kartalari va Click hisobi orqali</li>
+                    <li><strong>Test to'lov</strong> - Demo uchun (haqiqiy to'lovsiz)</li>
+                </ul>
+
+                <h6 class="mt-3">Obuna muddati:</h6>
+                <p>Barcha pullik tariflar <strong>30 kun</strong> amal qiladi. Muddat tugagach, obunani yangilash zarur.</p>
+
+                <h6 class="mt-3">Xavfsizlik:</h6>
+                <p>Barcha to'lovlar xavfsiz SSL shifrlash orqali amalga oshiriladi. PayMe va Click lar O'zbekistonda ishonchli to'lov tizimlar.</p>
+            </div>
+        </div>
+
+        <!-- Payment History Link -->
+        <div class="text-center">
+            <a href="{{ url_for('payment.payment_history') }}" class="btn btn-outline-secondary">
+                📜 To'lovlar tarixi
+            </a>
+        </div>
+    </div>
+</div>
+{% endblock %}

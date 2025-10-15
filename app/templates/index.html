@@ -1,0 +1,192 @@
+{% extends "base.html" %}
+
+{% block title %}BotFactory - Make Your Own Chatbot!{% endblock %}
+
+{% block content %}
+<!-- Hero Section -->
+<div class="container-fluid" style="background: #1a1a1a; min-height: 40vh; color: white;">
+    <div class="row align-items-center h-100 py-4">
+        <div class="col-lg-6 text-center text-lg-start">
+            <h1 class="display-3 fw-bold mb-4 text-white">🤖 Make Your Own Chatbot!</h1>
+            <p class="lead fs-4 mb-4 text-white">It's super easy! Just like building with LEGO blocks. Your bot can talk to people on Telegram!</p>
+            
+            {% if not current_user.is_authenticated %}
+                <div class="d-grid gap-3 d-md-flex justify-content-md-start">
+                    <a href="{{ url_for('auth.register') }}" class="btn btn-warning btn-lg px-5 py-3 fw-bold text-dark" style="font-size: 1.2rem;">🚀 Start Building Now!</a>
+                    <a href="{{ url_for('auth.login') }}" class="btn btn-outline-light btn-lg px-4 py-3 text-white">Already Have Account?</a>
+                </div>
+            {% endif %}
+        </div>
+        <div class="col-lg-6 text-center">
+            <div class="position-relative">
+                <div class="bg-white rounded-4 p-4 shadow-lg" style="max-width: 400px; margin: 0 auto;">
+                    <div class="text-dark">
+                        <h5 class="fw-bold text-primary mb-3">🎯 Your Bot Can:</h5>
+                        <div class="text-start">
+                            <p class="mb-2 text-dark">💬 <strong class="text-dark">Chat</strong> with people</p>
+                            <p class="mb-2 text-dark">🎵 <strong class="text-dark">Talk</strong> with voice</p>
+                            <p class="mb-2 text-dark">🌍 <strong class="text-dark">Speak</strong> 4 languages</p>
+                            <p class="mb-0 text-dark">🧠 <strong class="text-dark">Be Smart</strong> like ChatGPT</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if current_user.is_authenticated %}
+<!-- Dashboard for Logged In Users -->
+<div class="container my-3">
+    <div class="row">
+        <div class="col-12">
+            <div class="bg-light rounded-4 p-3 mb-3">
+                <h3 class="text-primary mb-3">👋 Hi {{ current_user.username }}!</h3>
+                <div class="row g-3">
+                    <div class="col-md-3">
+                        <div class="card border-0 bg-primary text-white h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 text-white">{{ current_user.bots.count() }}</h1>
+                                <p class="mb-0 text-white">Your Bots</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-3">
+                        <div class="card border-0 bg-success text-white h-100">
+                            <div class="card-body text-center">
+                                <h1 class="display-4 text-white">{{ current_user.subscription_type.title() }}</h1>
+                                <p class="mb-0 text-white">Plan</p>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="d-grid gap-2">
+                            <a href="{{ url_for('bot.new_bot') }}" class="btn btn-success btn-lg py-3 text-white">
+                                🤖 Create New Bot
+                            </a>
+                            <a href="{{ url_for('bot.list_bots') }}" class="btn btn-primary btn-lg py-3 text-white">
+                                ⚙️ Manage My Bots
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+<!-- How It Works Section -->
+<div class="container my-3">
+    <div class="text-center mb-4">
+        <h2 class="display-5 fw-bold text-primary">🎯 How It Works (Super Easy!)</h2>
+        <p class="lead">Just 3 simple steps and your bot is ready!</p>
+    </div>
+    
+    <div class="row g-4">
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <span class="display-6 fw-bold">1</span>
+                    </div>
+                    <h4 class="fw-bold text-primary">📝 Tell Us About Your Bot</h4>
+                    <p class="text-muted">Give your bot a name and tell it how to behave. Like "Be friendly and helpful!"</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <span class="display-6 fw-bold">2</span>
+                    </div>
+                    <h4 class="fw-bold text-success">🔗 Connect to Telegram</h4>
+                    <p class="text-muted">Get a special code from Telegram and paste it here. We'll show you how!</p>
+                </div>
+            </div>
+        </div>
+        
+        <div class="col-md-4">
+            <div class="card border-0 shadow-sm h-100 text-center">
+                <div class="card-body p-4">
+                    <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 80px; height: 80px;">
+                        <span class="display-6 fw-bold">3</span>
+                    </div>
+                    <h4 class="fw-bold text-warning">🎉 Your Bot is Ready!</h4>
+                    <p class="text-muted">People can now chat with your bot on Telegram. It's that simple!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Features Section -->
+<div class="bg-light py-4">
+    <div class="container">
+        <div class="text-center mb-4">
+            <h2 class="display-5 fw-bold text-primary">✨ Amazing Features</h2>
+            <p class="lead">Your bot will be super smart and fun!</p>
+        </div>
+        
+        <div class="row g-4">
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="bg-primary text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fs-3">🧠</span>
+                    </div>
+                    <h5 class="fw-bold">Smart AI Brain</h5>
+                    <p class="text-muted">Powered by Google's AI - as smart as ChatGPT!</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="bg-success text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fs-3">🎵</span>
+                    </div>
+                    <h5 class="fw-bold">Voice Messages</h5>
+                    <p class="text-muted">Your bot can talk back with real voice!</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="bg-warning text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fs-3">🌍</span>
+                    </div>
+                    <h5 class="fw-bold">4 Languages</h5>
+                    <p class="text-muted">English, Russian, Uzbek, and Spanish!</p>
+                </div>
+            </div>
+            
+            <div class="col-lg-3 col-md-6">
+                <div class="text-center">
+                    <div class="bg-info text-white rounded-circle d-inline-flex align-items-center justify-content-center mb-3" style="width: 60px; height: 60px;">
+                        <span class="fs-3">⚡</span>
+                    </div>
+                    <h5 class="fw-bold">Super Fast</h5>
+                    <p class="text-muted">Answers in seconds, 24/7!</p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+{% if not current_user.is_authenticated %}
+<!-- Call to Action -->
+<div class="container my-3">
+    <div class="row">
+        <div class="col-lg-8 mx-auto text-center">
+            <div class="rounded-4 p-4" style="background: #1a1a1a; color: white;">
+                <h2 class="display-5 fw-bold mb-4 text-white">🚀 Ready to Build Your Bot?</h2>
+                <p class="lead mb-4 text-white">Join thousands of people who already created their own chatbots!</p>
+                <a href="{{ url_for('auth.register') }}" class="btn btn-warning btn-lg px-5 py-3 fw-bold text-dark" style="font-size: 1.2rem;">Start Building Now - It's Free!</a>
+            </div>
+        </div>
+    </div>
+</div>
+{% endif %}
+
+{% endblock %}

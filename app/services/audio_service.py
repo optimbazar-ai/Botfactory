@@ -1,6 +1,6 @@
 """
-Audio service for speech-to-text and text-to-speech functionality.
-Uses Google Speech Recognition for transcription and Gemini TTS for text-to-speech.
+Audio service for text-to-speech functionality.
+Uses Google TTS and Gemini for audio generation.
 """
 import os
 import tempfile
@@ -8,24 +8,15 @@ import requests
 import base64
 import wave
 import struct
-try:
-    import speech_recognition as sr
-except ImportError:
-    # Fallback if SpeechRecognition has issues
-    sr = None
-from io import BytesIO
-try:
-    from pydub import AudioSegment
-except ImportError:
-    # Fallback if pydub has issues with Python 3.13
-    AudioSegment = None
+import io
 from flask import current_app
 import google.generativeai as genai
+from gtts import gTTS
 
 
 def transcribe_audio(audio_bytes: bytes, language_code: str = 'uz-UZ') -> str:
     """
-    Convert speech audio to text - simplified version for production.
+    Convert speech audio to text - vaqtincha o'chirilgan.
     
     Args:
         audio_bytes: Audio file content in bytes
@@ -34,8 +25,7 @@ def transcribe_audio(audio_bytes: bytes, language_code: str = 'uz-UZ') -> str:
     Returns:
         str: Transcribed text or fallback message
     """
-    # For now, return a simple message since audio processing is complex in production
-    return "Audio transcription temporarily disabled"
+    return "🎤 Ovozli xabarlarni tushunish vaqtincha o'chirilgan. Matn yozing."
 
 
 def pcm_to_wav(pcm_data: bytes, sample_rate: int = 24000, channels: int = 1, sample_width: int = 2) -> bytes:
@@ -65,17 +55,37 @@ def pcm_to_wav(pcm_data: bytes, sample_rate: int = 24000, channels: int = 1, sam
 
 def text_to_speech(text: str, language_code: str = 'uz-UZ') -> bytes:
     """
-    Convert text to speech audio using Gemini TTS model via REST API.
+    Convert text to speech audio using multiple TTS services.
+    1. Try Gemini TTS (premium quality)
+    2. Fallback to Google TTS (reliable)
 
     Args:
         text: Text to convert to speech
         language_code: Language code (uz-UZ, ru-RU, en-US)
         
     Returns:
-        bytes: Audio content in WAV format, or empty bytes if generation fails.
+        bytes: Audio content in WAV/MP3 format
     """
+    print(f"🔊 TTS so'rovi: '{text[:50]}...' ({language_code})")
+    
+    # Try Gemini TTS first
+    gemini_audio = _try_gemini_tts(text, language_code)
+    if gemini_audio:
+        return gemini_audio
+    
+    # Fallback to Google TTS
+    print("🔄 Gemini TTS ishlamadi, Google TTS'ga o'tish...")
+    return _try_google_tts(text, language_code)
+
+
+def _try_gemini_tts(text: str, language_code: str) -> bytes:
+    """Gemini TTS'ni sinab ko'rish"""
     try:
-        api_key = current_app.config['GOOGLE_API_KEY']
+        api_key = current_app.config.get('GOOGLE_API_KEY')
+        if not api_key:
+            print("❌ GOOGLE_API_KEY topilmadi")
+            return b''
+            
         url = f"https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-tts:generateContent?key={api_key}"
 
         payload = {
@@ -94,7 +104,7 @@ def text_to_speech(text: str, language_code: str = 'uz-UZ') -> bytes:
 
         headers = {"Content-Type": "application/json"}
 
-        print("🔊 Generating audio with Gemini TTS API...")
+        print("🔊 Gemini TTS bilan audio yaratilmoqda...")
         response = requests.post(url, json=payload, headers=headers, timeout=30)
 
         if response.status_code == 200:
@@ -107,23 +117,52 @@ def text_to_speech(text: str, language_code: str = 'uz-UZ') -> bytes:
                             audio_data = part['inlineData']['data']
                             mime_type = part['inlineData'].get('mimeType', '')
                             pcm_data = base64.b64decode(audio_data)
-                            print(f"✅ Gemini TTS audio received: {len(pcm_data)} bytes (MIME: {mime_type})")
+                            print(f"✅ Gemini TTS muvaffaqiyatli: {len(pcm_data)} bytes")
 
                             if 'pcm' in mime_type.lower() or 'L16' in mime_type:
-                                print("🔄 Converting PCM to WAV...")
                                 wav_data = pcm_to_wav(pcm_data, sample_rate=24000)
-                                print(f"✅ WAV audio created: {len(wav_data)} bytes")
                                 return wav_data
                             else:
                                 return pcm_data
         
-        print(f"⚠️ Gemini TTS failed (status: {response.status_code}, response: {response.text[:500]})")
+        print(f"⚠️ Gemini TTS xatolik: {response.status_code}")
         return b''
 
     except Exception as e:
-        print(f"❌ Gemini TTS error: {str(e)}")
-        import traceback
-        traceback.print_exc()
+        print(f"❌ Gemini TTS xatolik: {str(e)}")
+        return b''
+
+
+def _try_google_tts(text: str, language_code: str) -> bytes:
+    """Google TTS'ni sinab ko'rish (fallback)"""
+    try:
+        # Language mapping for Google TTS
+        lang_map = {
+            'uz-UZ': 'tr',  # Uzbek yo'q, Turkish yaqin
+            'ru-RU': 'ru',
+            'en-US': 'en',
+            'es-ES': 'es'
+        }
+        
+        lang = lang_map.get(language_code, 'en')
+        
+        print(f"🔊 Google TTS bilan audio yaratilmoqda ({lang})...")
+        
+        # Create TTS object
+        tts = gTTS(text=text, lang=lang, slow=False)
+        
+        # Save to bytes
+        audio_buffer = io.BytesIO()
+        tts.write_to_fp(audio_buffer)
+        audio_buffer.seek(0)
+        
+        audio_data = audio_buffer.read()
+        print(f"✅ Google TTS muvaffaqiyatli: {len(audio_data)} bytes")
+        
+        return audio_data
+        
+    except Exception as e:
+        print(f"❌ Google TTS xatolik: {str(e)}")
         return b''
 
 

@@ -32,31 +32,25 @@ async def send_voice_message(bot: Bot, chat_id: int, audio_bytes: bytes):
     try:
         # Detect audio format from magic bytes
         if audio_bytes[:4] == b'RIFF':
-            # WAV format
-            filename = 'response.wav'
-            mime_type = 'audio/wav'
-        elif audio_bytes[:3] == b'ID3' or audio_bytes[:2] == b'\xff\xfb' or audio_bytes[:2] == b'\xff\xf3':
-            # MP3 format
-            filename = 'response.mp3'
-            mime_type = 'audio/mpeg'
-        elif audio_bytes[:4] == b'OggS':
-            # OGG format
-            filename = 'response.ogg'
-            mime_type = 'audio/ogg'
+            filename = "voice_message.wav"
+            mime_type = "audio/wav"
+        elif audio_bytes[:3] == b'ID3' or audio_bytes[:2] == b'\xff\xfb':
+            filename = "voice_message.mp3"
+            mime_type = "audio/mpeg"
         else:
-            # Default to MP3
-            filename = 'response.mp3'
-            mime_type = 'audio/mpeg'
+            filename = "voice_message.ogg"
+            mime_type = "audio/ogg"
         
         audio_file = BytesIO(audio_bytes)
         audio_file.name = filename
         
-        print(f"📤 Sending voice: {filename} ({len(audio_bytes)} bytes, mime: {mime_type})")
+        print(f"📤 Ovozli xabar yuborilmoqda: {filename} ({len(audio_bytes)} bytes)")
         
         # Use send_voice for voice messages (shows as voice note)
         await bot.send_voice(
             chat_id=chat_id,
-            voice=audio_file
+            voice=audio_file,
+            caption="🎵 Audio javob"
         )
         
         print(f"✅ Audio sent successfully!")

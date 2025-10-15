@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block title %}Kirish - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-sign-in-alt text-primary"></i> Tizimga Kirish
+                </h3>
+                
+                <form method="POST" action="{{ url_for('login') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user"></i> Foydalanuvchi nomi
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               required autofocus>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> Parol
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               required>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-sign-in-alt"></i> Kirish
+                    </button>
+                </form>
+                
+                <hr class="my-4">
+                
+                <div class="text-center">
+                    <p class="mb-3">Hisobingiz yo'qmi?</p>
+                    <a href="{{ url_for('register') }}" class="btn btn-success">
+                        <i class="fas fa-user-plus"></i> Ro'yxatdan O'tish
+                    </a>
+                    
+                    <div class="alert alert-warning mt-3">
+                        <small>
+                            <strong>Test hisob:</strong><br>
+                            Username: admin<br>
+                            Parol: admin123
+                        </small>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

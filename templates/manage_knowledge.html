@@ -1,0 +1,474 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bilimlar Bazasi - {{ bot.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/5.15.4/css/all.min.css">
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px 0;
+        }
+        .card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+        .nav-tabs .nav-link {
+            border-radius: 10px;
+            margin: 0 5px;
+        }
+        .nav-tabs .nav-link.active {
+            background: #667eea;
+            color: white;
+            border: none;
+        }
+        .knowledge-item {
+            border-left: 3px solid #667eea;
+            padding: 15px;
+            margin: 10px 0;
+            background: #f8f9fa;
+            border-radius: 8px;
+        }
+        .stat-card {
+            background: white;
+            padding: 15px;
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        .stat-number {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #667eea;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <div class="card">
+                    <div class="card-body">
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-center mb-4">
+                            <div>
+                                <h3><i class="fas fa-brain"></i> Bilimlar Bazasi</h3>
+                                <p class="text-muted mb-0">{{ bot.name }} uchun</p>
+                            </div>
+                            <a href="{{ url_for('view_bot', bot_id=bot.id) }}" class="btn btn-secondary">
+                                <i class="fas fa-arrow-left"></i> Ortga
+                            </a>
+                        </div>
+
+                        <!-- Statistika -->
+                        <div class="row mb-4">
+                            <div class="col-md-2">
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ stats.total_faq }}</div>
+                                    <div class="text-muted">Savollar</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ stats.total_facts }}</div>
+                                    <div class="text-muted">Faktlar</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ stats.total_instructions }}</div>
+                                    <div class="text-muted">Ko'rsatmalar</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ stats.total_contacts }}</div>
+                                    <div class="text-muted">Kontaktlar</div>
+                                </div>
+                            </div>
+                            <div class="col-md-2">
+                                <div class="stat-card">
+                                    <div class="stat-number">{{ stats.total_products }}</div>
+                                    <div class="text-muted">Mahsulotlar</div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Flash messages -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                    {{ message }}
+                                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                                </div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+
+                        <!-- Tabs -->
+                        <ul class="nav nav-tabs mb-3" id="knowledgeTabs">
+                            <li class="nav-item">
+                                <a class="nav-link active" data-bs-toggle="tab" href="#faq">
+                                    <i class="fas fa-question-circle"></i> FAQ
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#facts">
+                                    <i class="fas fa-book"></i> Faktlar
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#instructions">
+                                    <i class="fas fa-list-ol"></i> Ko'rsatmalar
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#contacts">
+                                    <i class="fas fa-address-book"></i> Kontaktlar
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#products">
+                                    <i class="fas fa-shopping-bag"></i> Mahsulotlar
+                                </a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link" data-bs-toggle="tab" href="#files">
+                                    <i class="fas fa-file-upload"></i> Fayl
+                                </a>
+                            </li>
+                        </ul>
+
+                        <!-- Tab Content -->
+                        <div class="tab-content">
+                            <!-- FAQ Tab -->
+                            <div class="tab-pane fade show active" id="faq">
+                                <form method="POST" action="{{ url_for('add_knowledge', bot_id=bot.id) }}">
+                                    <input type="hidden" name="type" value="faq">
+                                    <div class="row mb-3">
+                                        <div class="col-md-5">
+                                            <input type="text" name="question" class="form-control" 
+                                                   placeholder="Savol" required>
+                                        </div>
+                                        <div class="col-md-5">
+                                            <input type="text" name="answer" class="form-control" 
+                                                   placeholder="Javob" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="fas fa-plus"></i> Qo'shish
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="faq-list">
+                                    {% for item in knowledge.faq %}
+                                    <div class="knowledge-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <strong>S: {{ item.question }}</strong><br>
+                                                <span>J: {{ item.answer }}</span>
+                                                {% if item.usage_count > 0 %}
+                                                <br><small class="text-muted">
+                                                    <i class="fas fa-chart-line"></i> {{ item.usage_count }} marta ishlatilgan
+                                                </small>
+                                                {% endif %}
+                                            </div>
+                                            <form method="POST" action="{{ url_for('delete_knowledge', bot_id=bot.id) }}" 
+                                                  style="display: inline;">
+                                                <input type="hidden" name="type" value="faq">
+                                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Facts Tab -->
+                            <div class="tab-pane fade" id="facts">
+                                <form method="POST" action="{{ url_for('add_knowledge', bot_id=bot.id) }}">
+                                    <input type="hidden" name="type" value="fact">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <input type="text" name="title" class="form-control" 
+                                                   placeholder="Sarlavha" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <input type="text" name="content" class="form-control" 
+                                                   placeholder="Mazmun" required>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="fas fa-plus"></i> Qo'shish
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="facts-list">
+                                    {% for item in knowledge.facts %}
+                                    <div class="knowledge-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <strong>{{ item.title }}</strong><br>
+                                                <span>{{ item.content }}</span>
+                                            </div>
+                                            <form method="POST" action="{{ url_for('delete_knowledge', bot_id=bot.id) }}" 
+                                                  style="display: inline;">
+                                                <input type="hidden" name="type" value="facts">
+                                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Instructions Tab -->
+                            <div class="tab-pane fade" id="instructions">
+                                <form method="POST" action="{{ url_for('add_knowledge', bot_id=bot.id) }}">
+                                    <input type="hidden" name="type" value="instruction">
+                                    <div class="row mb-3">
+                                        <div class="col-md-4">
+                                            <input type="text" name="title" class="form-control" 
+                                                   placeholder="Ko'rsatma nomi" required>
+                                        </div>
+                                        <div class="col-md-6">
+                                            <textarea name="steps" class="form-control" 
+                                                      placeholder="Qadamlar (har bir qadamni yangi qatordan yozing)" 
+                                                      rows="3" required></textarea>
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="fas fa-plus"></i> Qo'shish
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="instructions-list">
+                                    {% for item in knowledge.instructions %}
+                                    <div class="knowledge-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <strong>{{ item.title }}</strong><br>
+                                                <ol>
+                                                {% for step in item.steps %}
+                                                    <li>{{ step }}</li>
+                                                {% endfor %}
+                                                </ol>
+                                            </div>
+                                            <form method="POST" action="{{ url_for('delete_knowledge', bot_id=bot.id) }}" 
+                                                  style="display: inline;">
+                                                <input type="hidden" name="type" value="instructions">
+                                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Contacts Tab -->
+                            <div class="tab-pane fade" id="contacts">
+                                <form method="POST" action="{{ url_for('add_knowledge', bot_id=bot.id) }}">
+                                    <input type="hidden" name="type" value="contact">
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <input type="text" name="name" class="form-control" 
+                                                   placeholder="Ism" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="text" name="phone" class="form-control" 
+                                                   placeholder="Telefon">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="text" name="telegram" class="form-control" 
+                                                   placeholder="Telegram">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <input type="email" name="email" class="form-control" 
+                                                   placeholder="Email">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="fas fa-plus"></i> Qo'shish
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="contacts-list">
+                                    {% for item in knowledge.contacts %}
+                                    <div class="knowledge-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <strong>{{ item.name }}</strong><br>
+                                                {% if item.phone %}
+                                                    <i class="fas fa-phone"></i> {{ item.phone }}<br>
+                                                {% endif %}
+                                                {% if item.telegram %}
+                                                    <i class="fab fa-telegram"></i> {{ item.telegram }}<br>
+                                                {% endif %}
+                                                {% if item.email %}
+                                                    <i class="fas fa-envelope"></i> {{ item.email }}
+                                                {% endif %}
+                                            </div>
+                                            <form method="POST" action="{{ url_for('delete_knowledge', bot_id=bot.id) }}" 
+                                                  style="display: inline;">
+                                                <input type="hidden" name="type" value="contacts">
+                                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Products Tab -->
+                            <div class="tab-pane fade" id="products">
+                                <form method="POST" action="{{ url_for('add_knowledge', bot_id=bot.id) }}">
+                                    <input type="hidden" name="type" value="product">
+                                    <div class="row mb-3">
+                                        <div class="col-md-3">
+                                            <input type="text" name="name" class="form-control" 
+                                                   placeholder="Mahsulot nomi" required>
+                                        </div>
+                                        <div class="col-md-4">
+                                            <input type="text" name="description" class="form-control" 
+                                                   placeholder="Tavsif" required>
+                                        </div>
+                                        <div class="col-md-3">
+                                            <input type="text" name="price" class="form-control" 
+                                                   placeholder="Narx">
+                                        </div>
+                                        <div class="col-md-2">
+                                            <button type="submit" class="btn btn-primary w-100">
+                                                <i class="fas fa-plus"></i> Qo'shish
+                                            </button>
+                                        </div>
+                                    </div>
+                                </form>
+
+                                <div class="products-list">
+                                    {% for item in knowledge.products %}
+                                    <div class="knowledge-item">
+                                        <div class="d-flex justify-content-between">
+                                            <div>
+                                                <strong>{{ item.name }}</strong><br>
+                                                <span>{{ item.description }}</span><br>
+                                                {% if item.price %}
+                                                    <span class="text-success">
+                                                        <i class="fas fa-tag"></i> {{ item.price }}
+                                                    </span>
+                                                {% endif %}
+                                            </div>
+                                            <form method="POST" action="{{ url_for('delete_knowledge', bot_id=bot.id) }}" 
+                                                  style="display: inline;">
+                                                <input type="hidden" name="type" value="products">
+                                                <input type="hidden" name="item_id" value="{{ item.id }}">
+                                                <button type="submit" class="btn btn-sm btn-danger">
+                                                    <i class="fas fa-trash"></i>
+                                                </button>
+                                            </form>
+                                        </div>
+                                    </div>
+                                    {% endfor %}
+                                </div>
+                            </div>
+
+                            <!-- Files Tab -->
+                            <div class="tab-pane fade" id="files">
+                                <div class="card mb-3">
+                                    <div class="card-body">
+                                        <h5><i class="fas fa-cloud-upload-alt"></i> Fayl yuklash</h5>
+                                        <p class="text-muted">
+                                            TXT, DOCX, PDF, CSV va boshqa formatlarni yuklang. 
+                                            Bot faylni o'qiydi va javoblarida ishlatadi.
+                                        </p>
+                                        
+                                        <form method="POST" action="{{ url_for('upload_knowledge_file', bot_id=bot.id) }}" 
+                                              enctype="multipart/form-data" id="fileUploadForm">
+                                            <div class="mb-3">
+                                                <label class="form-label">Fayl tanlang:</label>
+                                                <input type="file" name="file" class="form-control" 
+                                                       accept=".txt,.docx,.pdf,.csv,.xlsx,.xls" required>
+                                                <small class="text-muted">
+                                                    Qo'llab-quvvatlanadigan formatlar: TXT, DOCX, PDF, CSV, XLSX, XLS
+                                                </small>
+                                            </div>
+                                            <div class="mb-3">
+                                                <label class="form-label">Tavsif (ixtiyoriy):</label>
+                                                <input type="text" name="description" class="form-control" 
+                                                       placeholder="Fayl haqida qisqacha ma'lumot">
+                                            </div>
+                                            <button type="submit" class="btn btn-primary">
+                                                <i class="fas fa-upload"></i> Faylni yuklash
+                                            </button>
+                                        </form>
+                                    </div>
+                                </div>
+
+                                <!-- Yuklangan fayllar -->
+                                <h5 class="mt-4"><i class="fas fa-folder-open"></i> Yuklangan fayllar</h5>
+                                <div class="files-list">
+                                    {% if uploaded_files %}
+                                        {% for file in uploaded_files %}
+                                        <div class="knowledge-item">
+                                            <div class="d-flex justify-content-between align-items-center">
+                                                <div>
+                                                    <i class="fas fa-file"></i> 
+                                                    <strong>{{ file.filename }}</strong>
+                                                    <br>
+                                                    <small class="text-muted">
+                                                        {{ file.description or 'Tavsif yo\'q' }} | 
+                                                        {{ file.upload_date.strftime('%d.%m.%Y %H:%M') }}
+                                                    </small>
+                                                </div>
+                                                <form method="POST" action="{{ url_for('delete_knowledge_file', bot_id=bot.id, file_id=file.id) }}" 
+                                                      style="display: inline;">
+                                                    <button type="submit" class="btn btn-sm btn-danger" 
+                                                            onclick="return confirm('Faylni o\'chirmoqchimisiz?')">
+                                                        <i class="fas fa-trash"></i>
+                                                    </button>
+                                                </form>
+                                            </div>
+                                        </div>
+                                        {% endfor %}
+                                    {% else %}
+                                        <div class="alert alert-info">
+                                            <i class="fas fa-info-circle"></i> Hali fayl yuklanmagan
+                                        </div>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>

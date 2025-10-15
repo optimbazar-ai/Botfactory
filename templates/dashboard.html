@@ -1,0 +1,178 @@
+{% extends "base.html" %}
+
+{% block title %}Dashboard - BotFactory{% endblock %}
+
+{% block content %}
+<h2 class="text-white mb-4">
+    <i class="fas fa-dashboard"></i> Dashboard
+</h2>
+
+<!-- Statistika -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-number">{{ stats.total_bots }}</div>
+                    <div class="text-muted">Jami Botlar</div>
+                </div>
+                <i class="fas fa-robot fa-2x text-primary"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-number">{{ stats.active_bots }}</div>
+                    <div class="text-muted">Faol Botlar</div>
+                </div>
+                <i class="fas fa-circle-check fa-2x text-success"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-number">{{ stats.messages_used }}/{{ stats.messages_limit }}</div>
+                    <div class="text-muted">Xabarlar</div>
+                </div>
+                <i class="fas fa-message fa-2x text-info"></i>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-md-3">
+        <div class="stat-card">
+            <div class="d-flex justify-content-between align-items-center">
+                <div>
+                    <div class="stat-number">{{ stats.days_left }}</div>
+                    <div class="text-muted">Qolgan Kunlar</div>
+                </div>
+                <i class="fas fa-calendar fa-2x text-warning"></i>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Status Banner -->
+{% if not stats.is_premium %}
+<div class="alert alert-info">
+    <div class="d-flex justify-content-between align-items-center">
+        <div>
+            <h5><i class="fas fa-info-circle"></i> Test Rejimi</h5>
+            <p class="mb-0">
+                Sizda {{ stats.days_left }} kun qoldi. Premium rejimga o'tish uchun admin bilan bog'laning.
+            </p>
+        </div>
+        <div>
+            <a href="tel:+998996448444" class="btn btn-primary me-2">
+                <i class="fas fa-phone"></i> Qo'ng'iroq
+            </a>
+            <a href="https://t.me/Akramjon1984" class="btn btn-info">
+                <i class="fab fa-telegram"></i> Telegram
+            </a>
+        </div>
+    </div>
+</div>
+{% else %}
+<div class="alert alert-success">
+    <h5><i class="fas fa-crown"></i> Premium Rejim</h5>
+    <p class="mb-0">Siz premium foydalanuvchisiz. Barcha funksiyalar ochiq!</p>
+</div>
+{% endif %}
+
+<!-- Botlar ro'yxati -->
+<div class="card">
+    <div class="card-header d-flex justify-content-between align-items-center">
+        <h4 class="mb-0">
+            <i class="fas fa-robot"></i> Mening Botlarim
+        </h4>
+        <a href="{{ url_for('create_bot') }}" class="btn btn-primary">
+            <i class="fas fa-plus"></i> Yangi Bot
+        </a>
+    </div>
+    <div class="card-body">
+        {% if bots %}
+            <div class="table-responsive">
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Bot Nomi</th>
+                            <th>Til</th>
+                            <th>Username</th>
+                            <th>Xabarlar</th>
+                            <th>Status</th>
+                            <th>Amallar</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for bot in bots %}
+                        <tr>
+                            <td>
+                                <strong>{{ bot.name }}</strong>
+                                {% if bot.description %}
+                                    <br><small class="text-muted">{{ bot.description[:50] }}...</small>
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if bot.language == 'uz' %}
+                                    🇺🇿 O'zbek
+                                {% elif bot.language == 'ru' %}
+                                    🇷🇺 Rus
+                                {% else %}
+                                    🇬🇧 Ingliz
+                                {% endif %}
+                            </td>
+                            <td>
+                                {% if bot.telegram_username %}
+                                    <a href="https://t.me/{{ bot.telegram_username }}" target="_blank">
+                                        @{{ bot.telegram_username }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-muted">Token kiritilmagan</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <span class="badge bg-info">{{ bot.total_messages }}</span>
+                            </td>
+                            <td>
+                                {% if bot.is_active %}
+                                    <span class="badge bg-success">Faol</span>
+                                {% else %}
+                                    <span class="badge bg-secondary">O'chirilgan</span>
+                                {% endif %}
+                            </td>
+                            <td>
+                                <a href="{{ url_for('view_bot', bot_id=bot.id) }}" class="btn btn-sm btn-info">
+                                    <i class="fas fa-eye"></i>
+                                </a>
+                                <form method="POST" action="{{ url_for('delete_bot', bot_id=bot.id) }}" 
+                                      style="display: inline;" 
+                                      onsubmit="return confirm('Rostdan ham o\'chirmoqchimisiz?');">
+                                    <button type="submit" class="btn btn-sm btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                    </button>
+                                </form>
+                            </td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        {% else %}
+            <div class="text-center py-5">
+                <i class="fas fa-robot fa-3x text-muted mb-3"></i>
+                <h5>Hali bot yaratilmagan</h5>
+                <p class="text-muted">O'zingizning birinchi botingizni yarating!</p>
+                <a href="{{ url_for('create_bot') }}" class="btn btn-primary">
+                    <i class="fas fa-plus"></i> Bot Yaratish
+                </a>
+            </div>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}

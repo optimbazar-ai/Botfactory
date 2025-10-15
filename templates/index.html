@@ -1,0 +1,138 @@
+{% extends "base.html" %}
+
+{% block title %}BotFactory - Bosh Sahifa{% endblock %}
+
+{% block content %}
+<div class="text-center text-white py-5">
+    <h1 class="display-3 fw-bold mb-4">
+        <i class="fas fa-robot"></i> BotFactory
+    </h1>
+    <p class="lead mb-5">
+        Telegram botlarini kod yozmasdan yarating va boshqaring!
+    </p>
+</div>
+
+<div class="row">
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="display-4 text-primary mb-3">
+                    <i class="fas fa-rocket"></i>
+                </div>
+                <h4 class="card-title">Tez va Oson</h4>
+                <p class="card-text">
+                    Bir necha daqiqada o'z Telegram botingizni yarating. Kod yozish shart emas!
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="display-4 text-success mb-3">
+                    <i class="fas fa-brain"></i>
+                </div>
+                <h4 class="card-title">AI Quvvat</h4>
+                <p class="card-text">
+                    Google Gemini AI yordamida aqlli javoblar. 3 tilda muloqot: O'zbek, Rus, Ingliz.
+                </p>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-4 mb-4">
+        <div class="card h-100">
+            <div class="card-body text-center">
+                <div class="display-4 text-warning mb-3">
+                    <i class="fas fa-gift"></i>
+                </div>
+                <h4 class="card-title">15 Kunlik Test</h4>
+                <p class="card-text">
+                    Bepul 15 kunlik test muddati. 500 tagacha xabar. To'liq funksiyalar!
+                </p>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="card mt-4">
+    <div class="card-body">
+        <h3 class="text-center mb-4">💎 Narxlar</h3>
+        
+        <div class="row">
+            <div class="col-md-4 mb-3">
+                <div class="card border-success">
+                    <div class="card-header bg-success text-white text-center">
+                        <h4>Test</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="text-success">BEPUL</h2>
+                        <p>15 kun</p>
+                        <ul class="list-unstyled">
+                            <li>✅ 1 ta bot</li>
+                            <li>✅ 500 ta xabar</li>
+                            <li>✅ 3 til</li>
+                            <li>✅ AI javoblar</li>
+                        </ul>
+                        {% if not current_user.is_authenticated %}
+                            <a href="{{ url_for('register') }}" class="btn btn-success">Boshlash</a>
+                        {% endif %}
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card border-primary">
+                    <div class="card-header bg-primary text-white text-center">
+                        <h4>1 Oylik</h4>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="text-primary">145,000</h2>
+                        <p>so'm/oy</p>
+                        <ul class="list-unstyled">
+                            <li>✅ 1 ta bot</li>
+                            <li>✅ Cheksiz xabar</li>
+                            <li>✅ Barcha funksiyalar</li>
+                            <li>✅ Texnik yordam</li>
+                        </ul>
+                        <a href="tel:+998996448444" class="btn btn-primary">Bog'lanish</a>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-md-4 mb-3">
+                <div class="card border-warning">
+                    <div class="card-header bg-warning text-center">
+                        <h4>1 Yillik</h4>
+                        <span class="badge bg-danger">-42% chegirma</span>
+                    </div>
+                    <div class="card-body text-center">
+                        <h2 class="text-warning">1,000,000</h2>
+                        <p>so'm/yil</p>
+                        <ul class="list-unstyled">
+                            <li>✅ 1 ta bot</li>
+                            <li>✅ Cheksiz xabar</li>
+                            <li>✅ Barcha funksiyalar</li>
+                            <li>✅ Premium yordam</li>
+                        </ul>
+                        <a href="https://t.me/Akramjon1984" class="btn btn-warning">Telegram</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="text-center mt-5">
+    {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('register') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-rocket"></i> Hoziroq Boshlash
+        </a>
+    {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn btn-primary btn-lg">
+            <i class="fas fa-dashboard"></i> Dashboard
+        </a>
+    {% endif %}
+</div>
+{% endblock %}

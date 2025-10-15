@@ -1,0 +1,17 @@
+{
+  "faq": [],
+  "facts": [],
+  "instructions": [],
+  "contacts": [
+    {
+      "id": 1,
+      "name": "Akram",
+      "phone": "+998996448444",
+      "telegram": "https://t.me/Akramjon1984",
+      "email": "cetobos219@inilas.com",
+      "created_at": "2025-10-15T21:58:49.372956"
+    }
+  ],
+  "products": [],
+  "custom": []
+}

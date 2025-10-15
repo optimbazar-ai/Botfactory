@@ -1,0 +1,144 @@
+{% extends "base.html" %}
+
+{% block title %}{{ bot.name }} - BotFactory{% endblock %}
+
+{% block content %}
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">
+            <i class="fas fa-robot"></i> {{ bot.name }}
+            {% if bot.is_active %}
+                <span class="badge bg-success">Faol</span>
+            {% else %}
+                <span class="badge bg-secondary">O'chirilgan</span>
+            {% endif %}
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="row">
+            <div class="col-md-6">
+                <h5>Bot Ma'lumotlari</h5>
+                <table class="table">
+                    <tr>
+                        <td><strong>Nomi:</strong></td>
+                        <td>{{ bot.name }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Tavsif:</strong></td>
+                        <td>{{ bot.description or 'Yo\'q' }}</td>
+                    </tr>
+                    <tr>
+                        <td><strong>Til:</strong></td>
+                        <td>
+                            {% if bot.language == 'uz' %}
+                                🇺🇿 O'zbek
+                            {% elif bot.language == 'ru' %}
+                                🇷🇺 Rus
+                            {% else %}
+                                🇬🇧 Ingliz
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Telegram:</strong></td>
+                        <td>
+                            {% if bot.telegram_username %}
+                                <a href="https://t.me/{{ bot.telegram_username }}" target="_blank" class="btn btn-sm btn-info">
+                                    <i class="fab fa-telegram"></i> @{{ bot.telegram_username }}
+                                </a>
+                            {% else %}
+                                <span class="text-muted">Token kiritilmagan</span>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    <tr>
+                        <td><strong>Yaratilgan:</strong></td>
+                        <td>{{ bot.created_at.strftime('%d.%m.%Y %H:%M') }}</td>
+                    </tr>
+                </table>
+            </div>
+            
+            <div class="col-md-6">
+                <h5>Statistika</h5>
+                <div class="row">
+                    <div class="col-6">
+                        <div class="stat-card text-center">
+                            <div class="stat-number">{{ bot.total_messages }}</div>
+                            <div class="text-muted">Jami Xabarlar</div>
+                        </div>
+                    </div>
+                    <div class="col-6">
+                        <div class="stat-card text-center">
+                            <div class="stat-number">{{ bot.today_messages }}</div>
+                            <div class="text-muted">Bugungi Xabarlar</div>
+                        </div>
+                    </div>
+                </div>
+                
+                {% if bot.telegram_token %}
+                <div class="alert alert-success mt-3">
+                    <h6><i class="fas fa-check-circle"></i> Bot Tayyor!</h6>
+                    <p class="mb-2">Bot sozlamasi to'liq. Quyidagi tugmalar orqali boshqaring:</p>
+                    
+                    <div class="btn-group" role="group">
+                        {% if bot.is_active %}
+                            <form method="POST" action="{{ url_for('stop_bot', bot_id=bot.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-warning">
+                                    <i class="fas fa-stop"></i> To'xtatish
+                                </button>
+                            </form>
+                        {% else %}
+                            <form method="POST" action="{{ url_for('start_bot', bot_id=bot.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-success">
+                                    <i class="fas fa-play"></i> Ishga Tushirish
+                                </button>
+                            </form>
+                        {% endif %}
+                        
+                        <a href="https://t.me/{{ bot.telegram_username }}" target="_blank" class="btn btn-info">
+                            <i class="fab fa-telegram"></i> Telegram'da Ochish
+                        </a>
+                    </div>
+                </div>
+                {% else %}
+                <div class="alert alert-warning mt-3">
+                    <h6><i class="fas fa-exclamation-triangle"></i> Token Kiritilmagan</h6>
+                    <p class="mb-0">Bot ishlashi uchun Telegram token kerak.</p>
+                </div>
+                {% endif %}
+            </div>
+        </div>
+        
+        <hr>
+        
+        <div class="mb-3">
+            <h5>System Prompt</h5>
+            <div class="bg-light p-3 rounded">
+                <pre style="white-space: pre-wrap;">{{ bot.system_prompt or 'Standart prompt ishlatilmoqda' }}</pre>
+            </div>
+        </div>
+        
+        <div class="d-flex justify-content-between">
+            <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                <i class="fas fa-arrow-left"></i> Orqaga
+            </a>
+            <div>
+                <div class="btn-group" role="group">
+                    <a href="{{ url_for('manage_knowledge', bot_id=bot.id) }}" class="btn btn-info">
+                        <i class="fas fa-brain"></i> Bilimlar Bazasi
+                    </a>
+                    <a href="{{ url_for('edit_bot', bot_id=bot.id) }}" class="btn btn-warning">
+                        <i class="fas fa-edit"></i> Tahrirlash
+                    </a>
+                    <form method="POST" action="{{ url_for('delete_bot', bot_id=bot.id) }}" 
+                          style="display: inline;" onsubmit="return confirm('Rostdan ham o\'chirmoqchimisiz?');">
+                        <button type="submit" class="btn btn-danger">
+                            <i class="fas fa-trash"></i> O'chirish
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

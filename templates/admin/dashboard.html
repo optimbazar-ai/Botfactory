@@ -1,0 +1,152 @@
+{% extends "base.html" %}
+
+{% block title %}Admin Panel - BotFactory{% endblock %}
+
+{% block content %}
+<h2 class="text-white mb-4">
+    <i class="fas fa-user-shield"></i> Admin Panel
+</h2>
+
+<!-- Statistika -->
+<div class="row mb-4">
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-number">{{ stats.total_users }}</div>
+            <div class="text-muted">Jami Foydalanuvchilar</div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-number">{{ stats.active_users }}</div>
+            <div class="text-muted">Faol</div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-number">{{ stats.premium_users }}</div>
+            <div class="text-muted">Premium</div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-number">{{ stats.total_bots }}</div>
+            <div class="text-muted">Jami Botlar</div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-number">{{ stats.active_bots }}</div>
+            <div class="text-muted">Faol Botlar</div>
+        </div>
+    </div>
+    
+    <div class="col-md-2">
+        <div class="stat-card text-center">
+            <div class="stat-number">{{ stats.today_messages }}</div>
+            <div class="text-muted">Bugungi Xabarlar</div>
+        </div>
+    </div>
+</div>
+
+<!-- Quick Actions -->
+<div class="row mb-4">
+    <div class="col-md-3">
+        <a href="{{ url_for('admin_users') }}" class="btn btn-primary w-100">
+            <i class="fas fa-users"></i> Foydalanuvchilar
+        </a>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-success w-100" onclick="sendBroadcast()">
+            <i class="fas fa-bullhorn"></i> Broadcast Xabar
+        </button>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-warning w-100" onclick="viewReports()">
+            <i class="fas fa-chart-line"></i> Hisobotlar
+        </button>
+    </div>
+    <div class="col-md-3">
+        <button class="btn btn-danger w-100" onclick="viewSpam()">
+            <i class="fas fa-shield-alt"></i> Spam Nazorat
+        </button>
+    </div>
+</div>
+
+<!-- So'nggi Foydalanuvchilar -->
+<div class="card">
+    <div class="card-header">
+        <h4 class="mb-0">
+            <i class="fas fa-user-plus"></i> So'nggi Ro'yxatdan O'tganlar
+        </h4>
+    </div>
+    <div class="card-body">
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Username</th>
+                        <th>Email</th>
+                        <th>Telefon</th>
+                        <th>Status</th>
+                        <th>Sana</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for user in users %}
+                    <tr>
+                        <td>{{ user.id }}</td>
+                        <td>
+                            <strong>{{ user.username }}</strong>
+                            {% if user.is_admin %}
+                                <span class="badge bg-danger">Admin</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.email }}</td>
+                        <td>{{ user.phone or '-' }}</td>
+                        <td>
+                            {% if user.is_premium %}
+                                <span class="badge bg-warning">Premium</span>
+                            {% else %}
+                                <span class="badge bg-info">Test</span>
+                            {% endif %}
+                        </td>
+                        <td>{{ user.created_at.strftime('%d.%m.%Y') }}</td>
+                        <td>
+                            <form method="POST" action="{{ url_for('toggle_premium', user_id=user.id) }}" style="display: inline;">
+                                <button type="submit" class="btn btn-sm btn-warning">
+                                    <i class="fas fa-crown"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+</div>
+
+<script>
+function sendBroadcast() {
+    const message = prompt('Broadcast xabar matni:');
+    if (message) {
+        alert('Xabar yuborildi: ' + message);
+        // AJAX request to send broadcast
+    }
+}
+
+function viewReports() {
+    alert('Hisobotlar sahifasi hali tayyor emas');
+}
+
+function viewSpam() {
+    alert('Spam nazorat sahifasi hali tayyor emas');
+}
+</script>
+{% endblock %}

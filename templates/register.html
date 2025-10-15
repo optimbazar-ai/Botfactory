@@ -1,0 +1,95 @@
+{% extends "base.html" %}
+
+{% block title %}Ro'yxatdan o'tish - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-6">
+        <div class="card">
+            <div class="card-body">
+                <h3 class="text-center mb-4">
+                    <i class="fas fa-user-plus text-primary"></i> Ro'yxatdan O'tish
+                </h3>
+                
+                <form method="POST" action="{{ url_for('register') }}">
+                    <div class="mb-3">
+                        <label for="username" class="form-label">
+                            <i class="fas fa-user"></i> Foydalanuvchi nomi
+                        </label>
+                        <input type="text" class="form-control" id="username" name="username" 
+                               required placeholder="masalan: john_doe">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="email" class="form-label">
+                            <i class="fas fa-envelope"></i> Email
+                        </label>
+                        <input type="email" class="form-control" id="email" name="email" 
+                               required placeholder="email@example.com">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="phone" class="form-label">
+                            <i class="fas fa-phone"></i> Telefon (ixtiyoriy)
+                        </label>
+                        <input type="tel" class="form-control" id="phone" name="phone" 
+                               placeholder="+998901234567">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password" class="form-label">
+                            <i class="fas fa-lock"></i> Parol
+                        </label>
+                        <input type="password" class="form-control" id="password" name="password" 
+                               required minlength="6">
+                        <div class="form-text">Kamida 6 ta belgi</div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="password2" class="form-label">
+                            <i class="fas fa-lock"></i> Parolni tasdiqlash
+                        </label>
+                        <input type="password" class="form-control" id="password2" name="password2" 
+                               required minlength="6">
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <i class="fas fa-info-circle"></i> 
+                        Ro'yxatdan o'tganingizdan keyin <strong>15 kunlik bepul test</strong> muddati boshlanadi!
+                        <ul class="mb-0 mt-2">
+                            <li>1 ta bot yaratish</li>
+                            <li>500 ta xabar</li>
+                            <li>Barcha funksiyalar</li>
+                        </ul>
+                    </div>
+                    
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-check"></i> Ro'yxatdan O'tish
+                    </button>
+                </form>
+                
+                <div class="text-center mt-3">
+                    <p>
+                        Allaqachon hisobingiz bormi? 
+                        <a href="{{ url_for('login') }}">Kirish</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // Parol tasdiqlash
+    document.querySelector('form').addEventListener('submit', function(e) {
+        var password = document.getElementById('password').value;
+        var password2 = document.getElementById('password2').value;
+        
+        if (password !== password2) {
+            e.preventDefault();
+            alert('Parollar mos kelmayapti!');
+            return false;
+        }
+    });
+</script>
+{% endblock %}

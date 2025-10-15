@@ -1,353 +1,126 @@
-# BotFactory - Flask Web Application
+# 🤖 BotFactory
 
-A powerful platform for creating and managing Telegram bots with AI capabilities.
+Telegram botlarini kod yozmasdan yarating va boshqaring!
 
-[![Deploy to Netlify](https://www.netlify.com/img/deploy/button.svg)](https://app.netlify.com/start/deploy?repository=https://github.com/yourusername/botfactory)
+## ✨ Xususiyatlari
 
-## ✨ Features
+- 🚀 **Oson yaratish** - Bir necha daqiqada bot yarating
+- 🧠 **AI quvvat** - Google Gemini AI bilan aqlli javoblar
+- 🔄 **Ko'p API Key** - Limit tugasa avtomatik boshqa key/modelga o'tish
+- 🎤 **Ovozli xabarlar** - STT va TTS qo'llab-quvvatlash
+- 🌐 **Ko'p tillilik** - O'zbek, Rus, Ingliz tillari
+- 🛡️ **Spam himoya** - Avtomatik spam aniqlash
+- 📊 **Statistika** - To'liq bot statistikasi
+- 💎 **Test/Premium** - 15 kunlik bepul test
 
-- 🤖 **Create Smart Bots** - AI-powered chatbots using Google Gemini
-- 🎵 **Voice Messages** - Text-to-Speech and Speech-to-Text
-- 🌍 **4 Languages** - English, Russian, Uzbek, Spanish
-- 📱 **Telegram Integration** - Easy webhook setup
-- 🔧 **User-Friendly** - Simple 3-step bot creation
-- ⚙️ **Bot Management** - Edit, delete, and manage your bots
+## 🚀 O'rnatish
 
-## 🚀 Quick Deploy to Netlify
-
-1. **Fork this repository**
-2. **Connect to Netlify:**
-   - Go to [Netlify](https://netlify.com)
-   - Click "New site from Git"
-   - Choose your forked repository
-3. **Set Environment Variables:**
-   - `GOOGLE_API_KEY` - Your Google Gemini API key
-   - `SESSION_SECRET` - Random secret key for sessions
-4. **Deploy!**
-
-## 🛠️ Local Development
-
-### **🚀 Tezkor boshlash:**
-
+### 1. Loyihani klonlash
 ```bash
-# 1. Repository clone qiling
-git clone https://github.com/optimbazar-ai/Botfactory.git
-cd Botfactory
-
-# 2. Virtual environment yarating
-python -m venv venv
-venv\Scripts\activate  # Windows
-# source venv/bin/activate  # Linux/Mac
-
-# 3. Dependencies o'rnating
-pip install -r requirements.txt
-
-# 4. Environment variables sozlang
-copy .env.example .env
-# .env faylida GOOGLE_API_KEY ni to'ldiring
-
-# 5. Local server ishga tushiring
-python run_local.py
-```
-
-### **🤖 Bot test qilish:**
-
-#### **1. Webhook'siz test (oson):**
-```bash
-python test_bot_local.py
-```
-
-#### **2. Ngrok bilan webhook test:**
-```bash
-# Terminal 1: Flask server
-python run_local.py
-
-# Terminal 2: Ngrok
-ngrok http 5000
-
-# Terminal 3: Webhook sozlash
-python setup_ngrok.py
-```
-
-### **📝 Environment Variables (.env):**
-```bash
-# REQUIRED - Google API key
-GOOGLE_API_KEY=your-google-api-key-here
-
-# REQUIRED - Flask secret
-SESSION_SECRET=your-secret-key-here
-
-# OPTIONAL - Database (default: SQLite)
-# DATABASE_URL=postgresql://user:pass@localhost/botfactory
 git clone https://github.com/yourusername/botfactory.git
 cd botfactory
+```
 
-# Install dependencies
+### 2. Virtual muhit yaratish
+```bash
+python -m venv venv
+venv\Scripts\activate  # Windows
+source venv/bin/activate  # Linux/Mac
+```
+
+### 3. Kutubxonalarni o'rnatish
+```bash
 pip install -r requirements.txt
+```
 
-# Set up environment variables
+### 4. .env faylini sozlash
+```bash
 cp .env.example .env
-# Edit .env with your API keys
-
-# Run the application
-python main.py
+# .env faylini tahrirlang va kerakli API kalitlarni kiriting
 ```
 
-## 📋 Environment Variables
-
-- `GOOGLE_API_KEY` - Google Gemini API key (required)
-- `SESSION_SECRET` - Flask session secret (required)
-- `DATABASE_URL` - PostgreSQL URL (optional, defaults to SQLite)
-
-## 🌐 Live Demo
-
-Visit: [Your Netlify URL]
-
-## 📱 How to Use
-
-1. **Register** - Create your free account
-2. **Create Bot** - Follow the 3-step process
-3. **Get Token** - From @BotFather on Telegram
-4. **Set Webhook** - Use the provided HTTPS URL
-5. **Test** - Your bot is ready!
-
-## 🔧 Tech Stack
-
-- **Backend:** Flask, SQLAlchemy, SQLite/PostgreSQL
-- **AI:** Google Gemini API
-- **TTS/STT:** Google Cloud Speech APIs
-- **Telegram:** python-telegram-bot
-- **Frontend:** Bootstrap 5, Jinja2
-- **Deployment:** Netlify Functions
-
-## 📄 License
-
-MIT License - see LICENSE file for details.
-- **CSRF Protection**: Flask-WTF for form security
-- **Modern UI**: Bootstrap 5 responsive design
-- **Subscription Limits**: Free users can create 1 bot (expandable with premium)
-
-## Project Structure
-
-```
-botfactory/
-├── app/
-│   ├── models/
-│   │   ├── __init__.py
-│   │   ├── user.py          # User model
-│   │   ├── bot.py           # Bot model
-│   │   └── knowledge_base.py # Knowledge Base model
-│   ├── routes/
-│   │   ├── __init__.py
-│   │   ├── auth.py          # Authentication routes
-│   │   ├── bot.py           # Bot management routes
-│   │   ├── kb.py            # Knowledge Base routes
-│   │   ├── ai.py            # AI test routes
-│   │   └── telegram.py      # Telegram webhook routes
-│   ├── services/
-│   │   ├── __init__.py
-│   │   ├── ai_service.py    # Google Gemini integration
-│   │   ├── telegram_service.py  # Telegram bot service
-│   │   └── kb_service.py    # Knowledge Base file processing
-│   ├── templates/
-│   │   ├── base.html        # Base template with Bootstrap 5
-│   │   ├── index.html       # Home page
-│   │   ├── login.html       # Login form
-│   │   ├── register.html    # Registration form
-│   │   ├── ai/
-│   │   │   └── test.html    # AI testing interface
-│   │   ├── bots/
-│   │   │   ├── list.html    # Bot list view
-│   │   │   └── new.html     # Bot creation form
-│   │   ├── kb/
-│   │   │   ├── manage.html  # Knowledge Base management
-│   │   │   └── view.html    # View KB file content
-│   │   └── telegram/
-│   │       ├── setup.html   # Webhook setup
-│   │       └── test.html    # Bot testing interface
-│   ├── __init__.py          # App factory
-│   └── forms.py             # WTForms (Auth + Bot)
-├── config.py                # Configuration
-├── main.py                  # Entry point
-├── requirements.txt         # Dependencies
-├── .env.example            # Environment variables template
-└── README.md               # This file
+### 5. Loyihani ishga tushirish
+```bash
+python app.py
 ```
 
-## User Model
+Brauzer: http://localhost:5000
 
-The `User` model includes:
-- `id` (int, primary key)
-- `username` (str, unique)
-- `email` (str, unique)
-- `password_hash` (str)
-- `language` (str, default: 'uz')
-- `subscription_type` (str, default: 'free')
-- `is_admin` (bool, default: False)
-- `is_active` (bool, default: True)
-- `created_at` (datetime)
+## 📝 Sozlamalar
 
-## Bot Model
+### Gemini API Key olish:
+1. https://makersuite.google.com/app/apikey ga o'ting
+2. "Create API Key" tugmasini bosing
+3. API key ni .env fayliga qo'shing
 
-The `Bot` model includes:
-- `id` (int, primary key)
-- `user_id` (int, foreign key to User)
-- `name` (str)
-- `description` (str, optional)
-- `language` (str, choices: uz/ru/en)
-- `platform` (str, currently only 'telegram')
-- `system_prompt` (text, optional)
-- `telegram_token` (str, optional)
-- `is_active` (bool, default: True)
-- `created_at` (datetime)
-- `updated_at` (datetime)
-
-## Knowledge Base Model
-
-The `KnowledgeBase` model includes:
-- `id` (int, primary key)
-- `bot_id` (int, foreign key to Bot)
-- `filename` (str)
-- `content` (text) - Extracted text from uploaded file
-- `file_type` (str, choices: txt/docx)
-- `file_size` (int, bytes)
-- `uploaded_at` (datetime)
-
-## Routes
-
-**Authentication:**
-- `GET /` - Home page
-- `GET /register` - Registration form
-- `POST /register` - Create new user
-- `GET /login` - Login form
-- `POST /login` - Authenticate user
-- `GET /logout` - Logout user
-
-**Bot Management (Protected):**
-- `GET /bots` - List user's bots
-- `GET /bots/new` - Bot creation form
-- `POST /bots/new` - Create new bot
-
-**AI Testing (Protected):**
-- `GET /ai/test-ai` - AI testing interface
-- `POST /ai/test-ai` - Send message to AI
-- `POST /ai/test-ai/api` - JSON API endpoint
-- `GET /ai/test-connection` - Test Gemini API connection
-
-**Knowledge Base (Protected):**
-- `GET /bots/<bot_id>/knowledge-base` - Manage knowledge base files
-- `POST /bots/<bot_id>/upload-kb` - Upload .txt or .docx file
-- `POST /bots/<bot_id>/kb/<kb_id>/delete` - Delete knowledge base file
-- `GET /bots/<bot_id>/kb/<kb_id>/view` - View file content
-
-**Telegram Integration:**
-- `POST /telegram/webhook/<bot_id>` - Telegram webhook endpoint (public)
-- `GET /telegram/setup/<bot_id>` - Webhook setup page (protected)
-- `POST /telegram/setup/<bot_id>` - Set/delete webhook (protected)
-- `GET /telegram/test/<bot_id>` - Test bot interface (protected)
-- `POST /telegram/test/<bot_id>` - Send test message (protected)
-
-## Installation
-
-1. **Clone the repository** (or navigate to project directory)
-
-2. **Create virtual environment**:
-   ```bash
-   python -m venv venv
-   ```
-
-3. **Activate virtual environment**:
-   - Windows: `venv\Scripts\activate`
-   - Linux/Mac: `source venv/bin/activate`
-
-4. **Install dependencies**:
-   ```bash
-   pip install -r requirements.txt
-   ```
-
-5. **Set up environment variables**:
-   - Copy `.env.example` to `.env`
-   - Update `SESSION_SECRET` with a secure random key
-   ```bash
-   copy .env.example .env
-   ```
-
-6. **Run the application**:
-   ```bash
-   python main.py
-   ```
-
-7. **Access the application**:
-   - Open browser: http://127.0.0.1:5000
-
-## Environment Variables
-
-Required:
-- `SESSION_SECRET`: Flask secret key for sessions (REQUIRED)
-- `GOOGLE_API_KEY`: Google Gemini API key for AI features (REQUIRED)
-
-Optional:
-- `DATABASE_URL`: PostgreSQL connection string (defaults to SQLite if not set)
-
-### Getting a Google API Key
-
-1. Go to [Google AI Studio](https://aistudio.google.com/app/apikey)
-2. Sign in with your Google account
-3. Click "Create API Key"
-4. Copy the key and add it to your `.env` file
-
-## Database
-
-**SQLite (Default)**: Creates `botfactory.db` in project root
-
-**PostgreSQL (Optional)**: Set `DATABASE_URL` environment variable:
+### Ko'p API Key sozlash (Ixtiyoriy):
+```env
+GEMINI_API_KEY=birinchi-api-key
+GEMINI_API_KEY_2=ikkinchi-api-key
 ```
-DATABASE_URL=postgresql://username:password@localhost/dbname
-```
+**Afzalligi:** Birinchi key limiti tugasa, avtomatik ikkinchisiga o'tadi!
 
-## Security Notes
+### Telegram Bot yaratish:
+1. Telegram'da @BotFather ga o'ting
+2. `/newbot` buyrug'ini yuboring
+3. Bot nomini va username kiriting
+4. Olingan tokenni BotFactory'da ishlatinging
 
-- Passwords are hashed using bcrypt
-- CSRF protection enabled on all forms
-- Session secret must be set in environment
-- User accounts can be deactivated (is_active flag)
-- Bot access is protected by @login_required decorator
-- Users can only view/manage their own bots
+## 🎯 Foydalanish
 
-## Subscription Limits
+### 1. Ro'yxatdan o'tish
+- Saytda ro'yxatdan o'ting
+- 15 kunlik bepul test muddati boshlanadi
 
-- **Free Plan**: 1 bot maximum
-- **Premium Plans**: Can be configured for unlimited bots
+### 2. Bot yaratish
+- Dashboard'da "Yangi Bot" tugmasini bosing
+- Bot ma'lumotlarini kiriting
+- Telegram bot tokenini qo'shing
 
-## Next Steps
+### 3. Botni ishga tushirish
+- Bot sahifasida "Ishga Tushirish" tugmasini bosing
+- Telegram'da botingizni sinab ko'ring
 
-Planned features:
-- **Telegram Webhook Integration**: Connect bots to Telegram API
-- **Payment System**: Subscription upgrades (Stripe/PayPal)
-- **Admin Dashboard**: User and bot management for admins
-- **Bot Analytics**: Track usage and conversations
-- **Edit/Delete Bots**: Full CRUD operations for bot management
-- **Multi-language UI**: Uzbek/Russian/English interface support
-- **Connect AI to Bots**: Use bot's system_prompt with Telegram messages
+## 💰 Narxlar
 
-## Dependencies
+- **Test**: 15 kun bepul (1 bot, 500 xabar)
+- **1 oylik**: 145,000 so'm
+- **1 yillik**: 1,000,000 so'm
 
-- Flask 3.1.2
-- Flask-Login 0.6.3
-- Flask-WTF 1.2.1
-- Flask-SQLAlchemy 3.1.1
-- bcrypt 4.1.2
-- python-dotenv 1.0.1
-- psycopg2-binary 2.9.9
-- email-validator 2.1.0
-- google-generativeai 0.8.3
-- python-telegram-bot 22.0.0
-- python-docx 1.1.2
+## 🛠️ Texnologiyalar
 
-## Documentation
+- **Backend**: Flask (Python)
+- **Database**: SQLite/PostgreSQL
+- **AI**: Google Gemini
+- **Bot**: python-telegram-bot
+- **TTS**: Google Text-to-Speech
+- **STT**: Google Speech Recognition
+- **Frontend**: Bootstrap 5
 
-- **README.md** - Main documentation (this file)
-- **AI_INTEGRATION.md** - Google Gemini AI setup and usage
-- **TELEGRAM_INTEGRATION.md** - Telegram bot webhook guide
-- **USAGE.md** - User guide for the application
-- **CHANGELOG.md** - Version history and changes
+## 📱 Admin Aloqa
+
+- 📞 Telefon: +998996448444
+- 💬 Telegram: @Akramjon1984
+
+## 🔧 Deployment (Render.com)
+
+1. Render.com da yangi "Web Service" yarating
+2. GitHub repo'ni ulang
+3. Environment variables qo'shing:
+   - `FLASK_ENV=production`
+   - `DATABASE_URL` (avtomatik)
+   - `GEMINI_API_KEY`
+4. Build command: `pip install -r requirements.txt`
+5. Start command: `gunicorn app:app`
+
+## 📄 Litsenziya
+
+MIT License
+
+## 👨‍💻 Muallif
+
+BotFactory Team
+
+---
+
+**Savol va takliflar uchun admin bilan bog'laning!**

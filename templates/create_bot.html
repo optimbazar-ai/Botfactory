@@ -1,0 +1,131 @@
+{% extends "base.html" %}
+
+{% block title %}Bot Yaratish - BotFactory{% endblock %}
+
+{% block content %}
+<div class="row justify-content-center">
+    <div class="col-md-8">
+        <div class="card">
+            <div class="card-header">
+                <h4 class="mb-0">
+                    <i class="fas fa-robot text-primary"></i> Yangi Bot Yaratish
+                </h4>
+            </div>
+            <div class="card-body">
+                <form method="POST" action="{{ url_for('create_bot') }}">
+                    <div class="mb-3">
+                        <label for="name" class="form-label">
+                            <i class="fas fa-tag"></i> Bot Nomi <span class="text-danger">*</span>
+                        </label>
+                        <input type="text" class="form-control" id="name" name="name" 
+                               required placeholder="Masalan: Mijozlar yordamchisi">
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="description" class="form-label">
+                            <i class="fas fa-info-circle"></i> Tavsif
+                        </label>
+                        <textarea class="form-control" id="description" name="description" 
+                                  rows="3" placeholder="Bot nima qiladi?"></textarea>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="telegram_token" class="form-label">
+                            <i class="fab fa-telegram"></i> Telegram Bot Token
+                        </label>
+                        <input type="text" class="form-control" id="telegram_token" name="telegram_token" 
+                               placeholder="123456789:AAFxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx">
+                        <div class="form-text">
+                            <a href="https://t.me/BotFather" target="_blank">@BotFather</a> dan olingan token
+                        </div>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="language" class="form-label">
+                            <i class="fas fa-language"></i> Bot Tili
+                        </label>
+                        <select class="form-control" id="language" name="language">
+                            <option value="uz">🇺🇿 O'zbek</option>
+                            <option value="ru">🇷🇺 Rus</option>
+                            <option value="en">🇬🇧 Ingliz</option>
+                        </select>
+                    </div>
+                    
+                    <div class="mb-3">
+                        <label for="system_prompt" class="form-label">
+                            <i class="fas fa-brain"></i> Bot Xarakteri (System Prompt)
+                        </label>
+                        <textarea class="form-control" id="system_prompt" name="system_prompt" 
+                                  rows="5" placeholder="Bot qanday javob berishi kerak? Uning roli nima?">Siz yordam beruvchi virtual assistentsiz. Foydalanuvchi savollariga aniq va foydali javoblar bering.</textarea>
+                        <div class="form-text">
+                            Bu matn botning shaxsiyatini belgilaydi
+                        </div>
+                    </div>
+                    
+                    <!-- Suhbat kuzatuvi sozlamalari -->
+                    <div class="card mb-3 border-info">
+                        <div class="card-header bg-info text-white">
+                            <h6 class="mb-0">
+                                <i class="fas fa-eye"></i> Suhbat kuzatuvi sozlamalari
+                            </h6>
+                        </div>
+                        <div class="card-body">
+                            <div class="alert alert-warning mb-3">
+                                <i class="fas fa-info-circle"></i> <strong>Suhbat kuzatuvi:</strong> Mijozlaringiz va botingiz o'rtasidagi barcha suhbatlar sizning shaxsiy Telegram chatiga yoki kanalingizga real vaqtda yuboriladi.
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="admin_chat_id" class="form-label">
+                                    <i class="fas fa-user-shield"></i> Admin Chat ID
+                                </label>
+                                <input type="text" class="form-control" id="admin_chat_id" name="admin_chat_id" 
+                                       placeholder="123456789">
+                                <div class="form-text">
+                                    Sizning shaxsiy Telegram chat ID-ingiz. <strong>Chat ID olish:</strong> <a href="https://t.me/userinfobot" target="_blank">@userinfobot</a> ga yozing va /start bosing
+                                </div>
+                            </div>
+                            
+                            <div class="mb-3">
+                                <label for="notification_channel" class="form-label">
+                                    <i class="fas fa-bullhorn"></i> Bildirishnoma kanali (ixtiyoriy)
+                                </label>
+                                <input type="text" class="form-control" id="notification_channel" name="notification_channel" 
+                                       placeholder="@kanal_nomi yoki -100123456789">
+                                <div class="form-text">
+                                    Telegram kanal nomi (@kanal_nomi) yoki kanal ID-si. Bot administratorligini bering!
+                                </div>
+                            </div>
+                            
+                            <div class="form-check form-switch">
+                                <input class="form-check-input" type="checkbox" id="notifications_enabled" name="notifications_enabled" checked>
+                                <label class="form-check-label" for="notifications_enabled">
+                                    <i class="fas fa-bell"></i> Suhbat bildirishnomalarini yoqish
+                                </label>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="alert alert-info">
+                        <h6><i class="fas fa-info-circle"></i> Qo'llanma</h6>
+                        <ol class="mb-0">
+                            <li><a href="https://t.me/BotFather" target="_blank">@BotFather</a> ga o'ting</li>
+                            <li><code>/newbot</code> buyrug'ini yuboring</li>
+                            <li>Bot nomini va username kiriting</li>
+                            <li>Olingan tokenni yuqoridagi maydonga kiriting</li>
+                        </ol>
+                    </div>
+                    
+                    <div class="d-flex justify-content-between">
+                        <a href="{{ url_for('dashboard') }}" class="btn btn-secondary">
+                            <i class="fas fa-arrow-left"></i> Orqaga
+                        </a>
+                        <button type="submit" class="btn btn-primary">
+                            <i class="fas fa-save"></i> Bot Yaratish
+                        </button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+{% endblock %}

@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+{% block title %}500 - Server Xatolik{% endblock %}
+
+{% block content %}
+<div class="text-center text-white py-5">
+    <h1 class="display-1">500</h1>
+    <h2>Server Xatolik</h2>
+    <p class="lead">Kechirasiz, serverda xatolik yuz berdi. Iltimos, keyinroq urinib ko'ring.</p>
+    <a href="{{ url_for('index') }}" class="btn btn-primary btn-lg mt-3">
+        <i class="fas fa-home"></i> Bosh Sahifaga
+    </a>
+</div>
+{% endblock %}

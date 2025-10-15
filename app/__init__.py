@@ -29,24 +29,59 @@ def create_app(config_class=Config):
         return User.query.get(int(user_id))
     
     # Register blueprints
-    from app.routes.main import main_bp
-    from app.routes.auth import auth_bp
-    from app.routes.bot import bot_bp
-    from app.routes.ai import ai_bp
-    from app.routes.telegram import telegram_bp
-    from app.routes.kb import kb_bp
-    from app.routes.payment import payment_bp
-    from app.routes.bot_control import bot_control_bp
-    from app.routes.admin import admin_bp
-    app.register_blueprint(main_bp)
-    app.register_blueprint(auth_bp)
-    app.register_blueprint(bot_bp, url_prefix='/bots')
-    app.register_blueprint(ai_bp)
-    app.register_blueprint(telegram_bp, url_prefix='/telegram')
-    app.register_blueprint(kb_bp, url_prefix='/kb')
-    app.register_blueprint(payment_bp, url_prefix='/payment')
-    app.register_blueprint(bot_control_bp)
-    app.register_blueprint(admin_bp)
+    try:
+        from app.routes.main import main_bp
+        app.register_blueprint(main_bp)
+    except ImportError:
+        print("⚠️ main route topilmadi")
+    
+    try:
+        from app.routes.auth import auth_bp
+        app.register_blueprint(auth_bp)
+    except ImportError:
+        print("⚠️ auth route topilmadi")
+    
+    try:
+        from app.routes.bot import bot_bp
+        app.register_blueprint(bot_bp, url_prefix='/bots')
+    except ImportError:
+        print("⚠️ bot route topilmadi")
+    
+    try:
+        from app.routes.telegram import telegram_bp
+        app.register_blueprint(telegram_bp, url_prefix='/telegram')
+    except ImportError:
+        print("⚠️ telegram route topilmadi")
+    
+    try:
+        from app.routes.kb import kb_bp
+        app.register_blueprint(kb_bp, url_prefix='/kb')
+    except ImportError:
+        print("⚠️ kb route topilmadi")
+    
+    try:
+        from app.routes.payment import payment_bp
+        app.register_blueprint(payment_bp, url_prefix='/payment')
+    except ImportError:
+        print("⚠️ payment route topilmadi")
+    
+    try:
+        from app.routes.bot_control import bot_control_bp
+        app.register_blueprint(bot_control_bp)
+    except ImportError:
+        print("⚠️ bot_control route topilmadi")
+    
+    try:
+        from app.routes.ai import ai_bp
+        app.register_blueprint(ai_bp)
+    except ImportError:
+        print("⚠️ ai route topilmadi")
+    
+    try:
+        from app.routes.admin import admin_bp
+        app.register_blueprint(admin_bp)
+    except ImportError:
+        print("⚠️ admin route topilmadi")
     
     # Create database tables
     with app.app_context():

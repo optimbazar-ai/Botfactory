@@ -8,7 +8,11 @@ import requests
 import base64
 import wave
 import struct
-import speech_recognition as sr
+try:
+    import speech_recognition as sr
+except ImportError:
+    # Fallback if SpeechRecognition has issues
+    sr = None
 from io import BytesIO
 from pydub import AudioSegment
 from flask import current_app
@@ -26,6 +30,9 @@ def transcribe_audio(audio_bytes: bytes, language_code: str = 'uz-UZ') -> str:
     Returns:
         str: Transcribed text
     """
+    if sr is None:
+        return "Speech recognition not available"
+        
     temp_ogg = None
     temp_wav = None
     

@@ -5,10 +5,11 @@ Flask-SQLAlchemy==3.1.1
 bcrypt==4.1.2
 python-dotenv==1.0.1
 psycopg2-binary==2.9.9
-email-validator==2.1.0
+email-validator==2.1.1
 google-generativeai>=0.8.5
 python-telegram-bot==22.0.0
 python-docx==1.1.2
 gTTS==2.5.1
-SpeechRecognition==3.10.0
+SpeechRecognition==3.10.4
 pydub==0.25.1
+openai-whisper

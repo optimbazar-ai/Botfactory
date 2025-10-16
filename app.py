@@ -298,11 +298,15 @@ def create_bot():
         # Telegram username olish (agar token to'g'ri bo'lsa)
         if telegram_token:
             try:
-                from telegram import Bot as TelegramBot
-                tg_bot = TelegramBot(token=telegram_token)
-                bot_info = tg_bot.get_me()
-                bot.telegram_username = bot_info.username
-            except:
+                import requests
+                response = requests.get(f'https://api.telegram.org/bot{telegram_token}/getMe', timeout=5)
+                if response.status_code == 200:
+                    bot_info = response.json()
+                    if bot_info.get('ok'):
+                        bot.telegram_username = bot_info['result']['username']
+                        print(f"✅ Bot username olindi: @{bot.telegram_username}")
+            except Exception as e:
+                print(f"⚠️ Bot username olinmadi: {e}")
                 pass
         
         db.session.add(bot)
@@ -384,19 +388,57 @@ def update_bot(bot_id):
     bot.notifications_enabled = request.form.get('notifications_enabled') == 'on'
     
     # Telegram token yangilash
-    new_token = request.form.get('telegram_token')
-    if new_token and new_token != bot.telegram_token:
-        bot.telegram_token = new_token
-        # Token yangilangan bo'lsa, username ni ham yangilash kerak
-        try:
-            import requests
-            response = requests.get(f'https://api.telegram.org/bot{new_token}/getMe')
-            if response.status_code == 200:
-                bot_info = response.json()
-                if bot_info.get('ok'):
-                    bot.telegram_username = bot_info['result']['username']
-        except:
-            pass
+    new_token = request.form.get('telegram_token', '').strip()
+    
+    # Debug log
+    print(f"📝 Token yangilash: Bot ID={bot_id}")
+    print(f"   Eski token: {bot.telegram_token[:20] if bot.telegram_token else 'YO\'Q'}...")
+    print(f"   Yangi token: {new_token[:20] if new_token else 'YO\'Q'}...")
+    
+    # Token mavjud bo'lsa yoki o'chirilsa
+    if new_token != bot.telegram_token:
+        if new_token:
+            # Avval tokenni saqlash (Telegram API ishlamasa ham)
+            bot.telegram_token = new_token
+            
+            # Yangi token tekshirish (ixtiyoriy)
+            try:
+                import requests
+                # Timeout qo'shamiz
+                response = requests.get(
+                    f'https://api.telegram.org/bot{new_token}/getMe',
+                    timeout=5
+                )
+                print(f"   Token tekshirish: {response.status_code}")
+                
+                if response.status_code == 200:
+                    bot_info = response.json()
+                    if bot_info.get('ok'):
+                        bot.telegram_username = bot_info['result']['username']
+                        print(f"✅ Token tekshirildi: @{bot.telegram_username}")
+                        flash(f'Token saqlandi! Bot: @{bot.telegram_username}', 'success')
+                    else:
+                        # Token noto'g'ri, lekin baribir saqlaymiz
+                        bot.telegram_username = None
+                        flash('Token saqlandi, lekin tekshirishda xatolik. Token to\'g\'riligiga ishonch hosil qiling!', 'warning')
+                        print(f"⚠️ Token response noto'g'ri: {bot_info}")
+                else:
+                    # API javob bermadi, lekin token saqlandi
+                    flash('Token saqlandi! (Telegram API bilan aloqa yo\'q)', 'info')
+                    print(f"⚠️ Telegram API javob bermadi: {response.status_code}")
+            except requests.exceptions.Timeout:
+                # Timeout bo'lsa ham token saqlangan
+                flash('Token saqlandi! (Telegram bilan aloqa sekin)', 'info')
+                print("⚠️ Telegram API timeout")
+            except Exception as e:
+                # Xatolik bo'lsa ham token saqlangan
+                flash('Token saqlandi! (Telegram tekshiruvi o\'tkazilmadi)', 'info')
+                print(f"⚠️ Telegram API xatolik: {e}")
+        else:
+            # Token o'chirilmoqda
+            bot.telegram_token = None
+            bot.telegram_username = None
+            print("⚠️ Token o'chirildi")
     
     db.session.commit()
     flash('Bot muvaffaqiyatli yangilandi!', 'success')

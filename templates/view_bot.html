@@ -42,12 +42,20 @@
                     <tr>
                         <td><strong>Telegram:</strong></td>
                         <td>
-                            {% if bot.telegram_username %}
-                                <a href="https://t.me/{{ bot.telegram_username }}" target="_blank" class="btn btn-sm btn-info">
-                                    <i class="fab fa-telegram"></i> @{{ bot.telegram_username }}
-                                </a>
+                            {% if bot.telegram_token %}
+                                {% if bot.telegram_username %}
+                                    <a href="https://t.me/{{ bot.telegram_username }}" target="_blank" class="btn btn-sm btn-info">
+                                        <i class="fab fa-telegram"></i> @{{ bot.telegram_username }}
+                                    </a>
+                                {% else %}
+                                    <span class="text-success">
+                                        <i class="fas fa-check-circle"></i> Token kiritilgan (Bot username yuklanmoqda...)
+                                    </span>
+                                {% endif %}
                             {% else %}
-                                <span class="text-muted">Token kiritilmagan</span>
+                                <span class="text-muted">
+                                    <i class="fas fa-exclamation-circle"></i> Token kiritilmagan
+                                </span>
                             {% endif %}
                         </td>
                     </tr>

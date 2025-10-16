@@ -16,19 +16,28 @@ from dotenv import load_dotenv
 
 load_dotenv()
 
-# Gemini API sozlash
-genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+# Gemini API sozlash (agar mavjud bo'lsa)
+if os.getenv('GEMINI_API_KEY'):
+    genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+else:
+    print("⚠️ GEMINI_API_KEY o'rnatilmagan - Bot oddiy rejimda ishlaydi")
 
 
 class TelegramBotService:
     """Telegram bot xizmatlari"""
     
     def __init__(self, bot_model, db):
+        """Bot service yaratish"""
         self.bot_model = bot_model
         self.db = db
         self.application = None
         self.running = False
         self.thread = None
+        
+        # Gemini API tekshirish
+        self.gemini_available = bool(os.getenv('GEMINI_API_KEY'))
+        if not self.gemini_available:
+            print("⚠️ GEMINI_API_KEY yo'q - oddiy javoblar ishlatiladi")
         
         # API keys va modellar ro'yxati
         self.api_keys = [
@@ -288,6 +297,10 @@ class TelegramBotService:
     
     async def get_ai_response(self, message, is_full_prompt=False):
         """Gemini AI dan javob olish (model va key almashish bilan)"""
+        # Agar Gemini API yo'q bo'lsa, oddiy javoblar
+        if not self.gemini_available:
+            return self.get_fallback_response(message)
+        
         # Prompt tayyorlash
         if is_full_prompt:
             prompt = message  # To'liq prompt berilgan
@@ -326,6 +339,36 @@ class TelegramBotService:
         # Hech qaysi model ishlamasa
         print("❌ Barcha model va keylar sinab ko'rildi, hech biri ishlamadi")
         return "Kechirasiz, hozircha javob bera olmayman. Keyinroq urinib ko'ring."
+    
+    def get_fallback_response(self, message):
+        """Gemini API yo'q bo'lganda oddiy javoblar"""
+        message_lower = message.lower()
+        
+        # Oddiy javoblar lug'ati
+        responses = {
+            'salom': 'Salom! Sizga qanday yordam bera olaman?',
+            'hello': 'Hello! How can I help you?',
+            'привет': 'Привет! Чем могу помочь?',
+            'qanday': 'Men yaxshiman, rahmat!',
+            'kim': f"Men {self.bot_model.name} botiman.",
+            'yordam': 'Sizga qanday yordam kerak?',
+            'help': 'How can I assist you?',
+            'помощь': 'Чем могу помочь?',
+            '/start': f"Xush kelibsiz! Men {self.bot_model.name} botiman.",
+        }
+        
+        # Bilimlar bazasidan javob izlash
+        kb_answer = self.knowledge_base.find_answer(message)
+        if kb_answer:
+            return kb_answer
+        
+        # Oddiy javoblardan mosini topish
+        for key, response in responses.items():
+            if key in message_lower:
+                return response
+        
+        # Default javob
+        return f"Sizning xabaringiz: {message}\n\nBot hozircha oddiy javob rejimida ishlayapti."
     
     def text_to_speech(self, text, language='uz'):
         """Matnni ovozga aylantirish (Gemini TTS)"""

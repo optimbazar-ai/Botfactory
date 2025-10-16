@@ -13,6 +13,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Bot manager import (keyinroq ishga tushiramiz)
+from services.bot_manager import BotManager
 bot_manager = None
 
 # Flask app yaratish
@@ -436,9 +437,13 @@ def start_bot(bot_id):
         flash('Sizda bu botni ishga tushirish huquqi yo\'q!', 'danger')
         return redirect(url_for('dashboard'))
     
+    # Bot manager tekshiruvi va qayta yaratish
+    global bot_manager
     if not bot_manager:
-        flash('Bot manager ishlamayapti!', 'danger')
-        return redirect(url_for('view_bot', bot_id=bot_id))
+        bot_manager = initialize_bot_manager()
+        if not bot_manager:
+            flash('Bot manager ishlamayapti! Sahifani yangilang.', 'danger')
+            return redirect(url_for('view_bot', bot_id=bot_id))
     
     result = bot_manager.start_bot(bot)
     
@@ -461,9 +466,13 @@ def stop_bot(bot_id):
         flash('Sizda bu botni to\'xtatish huquqi yo\'q!', 'danger')
         return redirect(url_for('dashboard'))
     
+    # Bot manager tekshiruvi va qayta yaratish
+    global bot_manager
     if not bot_manager:
-        flash('Bot manager ishlamayapti!', 'danger')
-        return redirect(url_for('view_bot', bot_id=bot_id))
+        bot_manager = initialize_bot_manager()
+        if not bot_manager:
+            flash('Bot manager ishlamayapti! Sahifani yangilang.', 'danger')
+            return redirect(url_for('view_bot', bot_id=bot_id))
     
     result = bot_manager.stop_bot(bot_id)
     
@@ -794,10 +803,22 @@ def internal_error(e):
 
 # ========== BOT MANAGER INITIALIZATION ==========
 
-# Bot manager'ni global qilish
-def init_app():
-    """Application va Bot Manager'ni ishga tushirish"""
+def initialize_bot_manager():
+    """Bot manager'ni alohida funksiyada ishga tushirish"""
     global bot_manager
+    try:
+        bot_manager = BotManager(db)
+        print("✅ Bot Manager global o'zgaruvchi tayyor!")
+        return bot_manager
+    except Exception as e:
+        print(f"❌ Bot Manager yaratishda xatolik: {e}")
+        import traceback
+        traceback.print_exc()
+        return None
+
+# Application initialization
+def init_app():
+    """Application'ni ishga tushirish"""
     with app.app_context():
         # Database jadvallarni yaratish (faqat yangi bo'lsa)
         db.create_all()
@@ -818,12 +839,7 @@ def init_app():
             print("✅ Admin yaratildi: username=admin")
         
         # Bot manager'ni ishga tushirish
-        try:
-            from services.bot_manager import init_bot_manager
-            bot_manager = init_bot_manager(db)
-            print("✅ Bot Manager ishga tushdi!")
-        except Exception as e:
-            print(f"⚠️ Bot Manager ishlamadi: {e}")
+        initialize_bot_manager()
 
 # Application initialization (Gunicorn uchun ham ishlaydi)
 init_app()

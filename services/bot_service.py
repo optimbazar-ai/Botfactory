@@ -7,9 +7,15 @@ from datetime import datetime, timedelta
 from telegram import Bot, Update
 from telegram.ext import Application, MessageHandler, CommandHandler, CallbackQueryHandler, filters
 import google.generativeai as genai
-from services.gemini_tts import GeminiTTS  # Gemini TTS o'rniga
+# TTS import (optional)
+try:
+    from services.gemini_tts import GeminiTTS
+    TTS_AVAILABLE = True
+except ImportError as e:
+    print(f"⚠️ Gemini TTS yuklanmadi (audio kutubxonalar yo'q): {e}")
+    TTS_AVAILABLE = False
 from services.knowledge_base import KnowledgeBase  # Bilimlar bazasi
-import speech_recognition as sr
+# import speech_recognition as sr  # Python 3.13 da pydub muammosi
 import io
 import os
 from dotenv import load_dotenv
@@ -60,8 +66,12 @@ class TelegramBotService:
         self.current_key_index = 0
         self.current_model_index = 0
         
-        # Gemini TTS service
-        self.tts_service = GeminiTTS()
+        # TTS service yaratish (agar mavjud bo'lsa)
+        if TTS_AVAILABLE:
+            self.tts_service = GeminiTTS()
+        else:
+            self.tts_service = None
+            print("⚠️ TTS service o'chirilgan - audio kutubxonalar yo'q")
         
         # Bilimlar bazasi
         self.knowledge_base = KnowledgeBase(bot_model.id, db)
@@ -378,6 +388,10 @@ class TelegramBotService:
     
     def text_to_speech(self, text, language='uz'):
         """Matnni ovozga aylantirish (Gemini TTS)"""
+        if not TTS_AVAILABLE or not self.tts_service:
+            print("⚠️ TTS mavjud emas - audio kutubxonalar yo'q")
+            return None
+            
         try:
             # Gemini TTS bilan ovoz yaratish
             # Til asosida ovoz tanlash
@@ -397,15 +411,9 @@ class TelegramBotService:
                 audio_buffer.seek(0)
                 return audio_buffer
             else:
-                print(f"⚠️ Gemini TTS ishlamadi, oddiy TTS ishlatilmoqda")
-                # Zaxira variant - oddiy TTS (agar kerak bo'lsa)
-                from gtts import gTTS
-                lang_codes = {'uz': 'tr', 'ru': 'ru', 'en': 'en'}
-                tts = gTTS(text=text, lang=lang_codes.get(language, 'en'), slow=False)
-                audio_buffer = io.BytesIO()
-                tts.write_to_fp(audio_buffer)
-                audio_buffer.seek(0)
-                return audio_buffer
+                print(f"⚠️ Gemini TTS ishlamadi")
+                # gtts ham pydub ishlatadi, shuning uchun o'chiramiz
+                return None
                 
         except Exception as e:
             print(f"❌ TTS xatolik: {e}")
@@ -413,110 +421,14 @@ class TelegramBotService:
     
     def speech_to_text(self, audio_bytes, language='uz'):
         """Ovozni matnga aylantirish - Google Speech Recognition"""
-        try:
-            from pydub import AudioSegment
-            import tempfile
-            
-            print(f"🎤 Speech-to-text boshlandi (Til: {language})")
-            
-            recognizer = sr.Recognizer()
-            
-            # Telegram OGG faylini WAV ga o'girish
-            with tempfile.NamedTemporaryFile(suffix='.ogg', delete=False) as temp_ogg:
-                temp_ogg.write(audio_bytes)
-                temp_ogg_path = temp_ogg.name
-            
-            # OGG to WAV
-            audio = AudioSegment.from_file(temp_ogg_path, format="ogg")
-            
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_wav:
-                temp_wav_path = temp_wav.name
-            
-            audio.export(temp_wav_path, format="wav")
-            
-            # Speech recognition
-            with sr.AudioFile(temp_wav_path) as source:
-                audio_data = recognizer.record(source)
-            
-            # Til kodlari - O'zbek uchun RUS ishlatamiz (yaxshiroq ishlaydi)
-            lang_codes = {
-                'uz': 'ru-RU',  # O'zbek uchun rus
-                'ru': 'ru-RU',
-                'en': 'en-US'
-            }
-            lang_code = lang_codes.get(language, 'ru-RU')
-            
-            print(f"🔍 Tanib olish: {lang_code}")
-            
-            # Google Speech Recognition
-            text = recognizer.recognize_google(audio_data, language=lang_code)
-            
-            # Temp fayllarni o'chirish
-            try:
-                os.unlink(temp_ogg_path)
-                os.unlink(temp_wav_path)
-            except:
-                pass
-            
-            if text:
-                print(f"✅ Tanildi: {text}")
-                return text
-            else:
-                print("⚠️ Matn tanimadi")
-                return None
-            
-        except sr.UnknownValueError:
-            print("❌ Ovozni tushunib bo'lmadi")
-            return None
-        except Exception as e:
-            print(f"❌ STT xatolik: {e}")
-            import traceback
-            traceback.print_exc()
-            return None
+        # pydub audio kutubxonalarni talab qiladi, Python 3.13 da ishlamaydi
+        print("⚠️ Speech-to-text mavjud emas - audio kutubxonalar yo'q")
+        return "⚠️ Ovozli xabarlar hozircha qo'llab-quvvatlanmaydi"
     
     def _google_speech_recognition(self, audio_bytes, language='uz'):
         """Zaxira variant: Google Speech Recognition"""
-        try:
-            from pydub import AudioSegment
-            import tempfile
-            
-            recognizer = sr.Recognizer()
-            
-            # OGG to WAV
-            with tempfile.NamedTemporaryFile(suffix='.ogg', delete=False) as temp_ogg:
-                temp_ogg.write(audio_bytes)
-                temp_ogg_path = temp_ogg.name
-            
-            audio = AudioSegment.from_file(temp_ogg_path, format="ogg")
-            
-            with tempfile.NamedTemporaryFile(suffix='.wav', delete=False) as temp_wav:
-                temp_wav_path = temp_wav.name
-            
-            audio.export(temp_wav_path, format="wav")
-            
-            # Speech recognition
-            with sr.AudioFile(temp_wav_path) as source:
-                audio_data = recognizer.record(source)
-            
-            # Til kodlari
-            lang_codes = {'uz': 'ru-RU', 'ru': 'ru-RU', 'en': 'en-US'}
-            lang_code = lang_codes.get(language, 'ru-RU')
-            
-            text = recognizer.recognize_google(audio_data, language=lang_code)
-            
-            # Cleanup
-            import os
-            try:
-                os.unlink(temp_ogg_path)
-                os.unlink(temp_wav_path)
-            except:
-                pass
-            
-            return text
-            
-        except Exception as e:
-            print(f"❌ Google STT xatolik: {e}")
-            return None
+        # pydub audio kutubxonalarni talab qiladi, Python 3.13 da ishlamaydi
+        return None
     
     async def check_spam(self, user_id, message_text):
         """Spam tekshirish"""

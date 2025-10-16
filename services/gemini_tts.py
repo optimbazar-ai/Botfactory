@@ -7,7 +7,14 @@ import io
 import json
 import requests
 from typing import Optional
-from pydub import AudioSegment
+
+# pydub Python 3.13 da muammo - optional qilamiz
+try:
+    from pydub import AudioSegment
+    PYDUB_AVAILABLE = True
+except ImportError:
+    print("⚠️ pydub yuklanmadi - audioop moduli Python 3.13 da o'chirilgan")
+    PYDUB_AVAILABLE = False
 
 class GeminiTTS:
     """Gemini TTS xizmati - gtts dan ancha yaxshi talaffuz"""
@@ -91,17 +98,22 @@ class GeminiTTS:
             print(f"❌ Gemini TTS xatolik: {e}")
             return None
     
-    def convert_pcm_to_mp3(self, base64_pcm: str, mime_type: str) -> Optional[bytes]:
+    def pcm_to_mp3(self, base64_pcm: str, mime_type: str) -> Optional[bytes]:
         """
-        PCM audio ma'lumotlarni MP3 ga o'girish
+        PCM audio ni MP3 ga konvertatsiya qilish
         
         Args:
-            base64_pcm: Base64 kodlangan PCM audio
-            mime_type: Audio MIME turi (sample rate ma'lumoti bilan)
+            base64_pcm: Base64 kodirlangan PCM audio
+            mime_type: MIME turi (sample rate uchun)
             
         Returns:
             MP3 audio bytes
         """
+        if not PYDUB_AVAILABLE:
+            print("⚠️ pydub mavjud emas - PCM audio qaytarilmoqda")
+            # PCM audio'ni qaytaramiz (MP3 o'rniga)
+            return base64.b64decode(base64_pcm)
+            
         try:
             # Base64 dan bytes ga
             pcm_bytes = base64.b64decode(base64_pcm)

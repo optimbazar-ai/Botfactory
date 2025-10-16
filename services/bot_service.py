@@ -17,10 +17,12 @@ from dotenv import load_dotenv
 load_dotenv()
 
 # Gemini API sozlash (agar mavjud bo'lsa)
-if os.getenv('GEMINI_API_KEY'):
-    genai.configure(api_key=os.getenv('GEMINI_API_KEY'))
+gemini_key = os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY')
+if gemini_key:
+    genai.configure(api_key=gemini_key)
+    print("✅ Gemini API key topildi va sozlandi")
 else:
-    print("⚠️ GEMINI_API_KEY o'rnatilmagan - Bot oddiy rejimda ishlaydi")
+    print("⚠️ GEMINI_API_KEY yoki GOOGLE_API_KEY o'rnatilmagan - Bot oddiy rejimda ishlaydi")
 
 
 class TelegramBotService:
@@ -35,15 +37,19 @@ class TelegramBotService:
         self.thread = None
         
         # Gemini API tekshirish
-        self.gemini_available = bool(os.getenv('GEMINI_API_KEY'))
+        gemini_key = os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY')
+        self.gemini_available = bool(gemini_key)
         if not self.gemini_available:
-            print("⚠️ GEMINI_API_KEY yo'q - oddiy javoblar ishlatiladi")
+            print("⚠️ GEMINI_API_KEY yoki GOOGLE_API_KEY yo'q - oddiy javoblar ishlatiladi")
         
-        # API keys va modellar ro'yxati
+        # API keys va modellar ro'yxati (barcha mavjud keylarni yig'ish)
         self.api_keys = [
             os.getenv('GEMINI_API_KEY'),
+            os.getenv('GOOGLE_API_KEY'),
             os.getenv('GEMINI_API_KEY_2')
         ]
+        # Bo'sh keylarni olib tashlash
+        self.api_keys = [key for key in self.api_keys if key and key != 'your-second-api-key-here']
         self.models = [
             'gemini-2.5-flash',      # Eng tez model
             'gemini-2.0-flash',      # Zaxira model 1

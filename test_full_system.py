@@ -29,21 +29,29 @@ def test_step(name, func):
 
 def test_environment():
     """Environment variables tekshirish"""
-    required_vars = ['GEMINI_API_KEY']
-    optional_vars = ['OPENAI_API_KEY', 'SECRET_KEY', 'DATABASE_URL']
+    # Kamida bitta API key bo'lishi kerak
+    api_keys = ['GEMINI_API_KEY', 'GOOGLE_API_KEY', 'GEMINI_API_KEY_2']
+    optional_vars = ['OPENAI_API_KEY', 'SECRET_KEY', 'DATABASE_URL', 'ADMIN_PASSWORD']
     
     print("\n" + "="*50)
     print(f"{Fore.YELLOW}📋 ENVIRONMENT VARIABLES CHECK{Style.RESET_ALL}")
     print("="*50)
     
-    all_good = True
-    
-    for var in required_vars:
+    # Kamida bitta API key borligini tekshirish
+    api_key_found = False
+    for var in api_keys:
         if os.getenv(var):
             print(f"{Fore.GREEN}✅ {var}: SET{Style.RESET_ALL}")
+            api_key_found = True
         else:
-            print(f"{Fore.RED}❌ {var}: NOT SET (REQUIRED!){Style.RESET_ALL}")
-            all_good = False
+            print(f"{Fore.YELLOW}⚠️ {var}: NOT SET{Style.RESET_ALL}")
+    
+    if not api_key_found:
+        print(f"{Fore.RED}❌ Hech qanday Gemini API key topilmadi!{Style.RESET_ALL}")
+        all_good = False
+    else:
+        print(f"{Fore.GREEN}✅ Kamida bitta API key mavjud{Style.RESET_ALL}")
+        all_good = True
     
     for var in optional_vars:
         if os.getenv(var):
@@ -106,10 +114,13 @@ def test_gemini_api():
     try:
         import google.generativeai as genai
         
-        api_key = os.getenv('GEMINI_API_KEY')
+        # Barcha mumkin bo'lgan API keylarni tekshirish
+        api_key = os.getenv('GEMINI_API_KEY') or os.getenv('GOOGLE_API_KEY') or os.getenv('GEMINI_API_KEY_2')
         if not api_key:
-            print(f"{Fore.RED}GEMINI_API_KEY yo'q!{Style.RESET_ALL}")
+            print(f"{Fore.RED}Hech qanday API key topilmadi!{Style.RESET_ALL}")
             return False
+        
+        print(f"{Fore.CYAN}🔑 API key topildi{Style.RESET_ALL}")
         
         genai.configure(api_key=api_key)
         

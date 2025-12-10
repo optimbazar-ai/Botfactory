@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="uz">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Bot Boshqaruv - {{ bot.name }}</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --bg-main: #ffffff;
+            --bg-panel: #f8f9fa;
+            --border-color: #dee2e6;
+            --primary-color: #0d6efd;
+            --text-main: #212529;
+            --text-muted: #6c757d;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            color: #212529 !important;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            min-height: 100vh;
+        }
+
+        .main-container {
+            display: flex;
+            min-height: 100vh;
+            background: #ffffff !important;
+        }
+
+        /* Left Sidebar (Settings) */
+        .settings-panel {
+            width: 450px;
+            background: #f8f9fa !important;
+            background-color: #f8f9fa !important;
+            border-right: 2px solid #dee2e6;
+            padding: 20px;
+            overflow-y: auto;
+            flex-shrink: 0;
+        }
+
+        .panel-header {
+            font-size: 18px;
+            font-weight: 600;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #dee2e6;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #212529 !important;
+        }
+
+        .form-label {
+            color: #212529 !important;
+            font-size: 14px;
+            margin-bottom: 8px;
+            font-weight: 500;
+        }
+
+        .form-control,
+        .form-select {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            border: 1px solid #ced4da !important;
+            color: #212529 !important;
+            padding: 10px;
+            border-radius: 8px;
+            font-size: 14px;
+        }
+
+        .form-control:focus {
+            background: #ffffff !important;
+            border-color: #0d6efd !important;
+            color: #212529 !important;
+            box-shadow: 0 0 0 0.2rem rgba(13, 110, 253, 0.25);
+        }
+
+        /* Right Content (Knowledge & Status) */
+        .content-panel {
+            flex: 1;
+            padding: 20px;
+            overflow-y: auto;
+            background: #ffffff !important;
+        }
+
+        /* Stats Cards */
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            border: 1px solid #dee2e6;
+            padding: 15px;
+            border-radius: 12px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.08);
+        }
+
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: #0d6efd;
+        }
+
+        .stat-label {
+            font-size: 13px;
+            color: #6c757d;
+        }
+
+        /* Knowledge Tabs */
+        .knowledge-section {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            border-radius: 12px;
+            border: 1px solid #dee2e6;
+            overflow: hidden;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.08);
+        }
+
+        .nav-tabs {
+            border-bottom: 1px solid #dee2e6;
+            background: #f8f9fa !important;
+            background-color: #f8f9fa !important;
+            padding: 0 10px;
+        }
+
+        .nav-link {
+            color: #6c757d !important;
+            border: none;
+            padding: 15px 20px;
+            font-weight: 500;
+        }
+
+        .nav-link:hover {
+            color: #0d6efd !important;
+        }
+
+        .nav-link.active {
+            color: #0d6efd !important;
+            background: transparent !important;
+            border-bottom: 2px solid #0d6efd;
+        }
+
+        .tab-content {
+            padding: 20px;
+            background: #ffffff !important;
+        }
+
+        /* Styled Items */
+        .knowledge-item {
+            background: #ffffff !important;
+            background-color: #ffffff !important;
+            border: 1px solid #dee2e6;
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            transition: all 0.2s;
+        }
+
+        .knowledge-item:hover {
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+            border-color: #adb5bd;
+        }
+
+        .delete-btn {
+            background: transparent;
+            border: none;
+            color: #dc3545;
+            opacity: 0.7;
+            transition: 0.2s;
+        }
+
+        .delete-btn:hover {
+            opacity: 1;
+        }
+
+        .btn-primary {
+            background: #0d6efd !important;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 8px;
+            color: #ffffff !important;
+        }
+
+        .badge-status {
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+
+        .status-active {
+            background: rgba(76, 175, 80, 0.1);
+            color: #4caf50;
+        }
+
+        .status-inactive {
+            background: rgba(244, 67, 54, 0.1);
+            color: #f44336;
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="main-container">
+        <!-- Left Panel: Settings -->
+        <div class="settings-panel">
+            <div class="panel-header">
+                <a href="{{ url_for('dashboard') }}" class="text-decoration-none text-muted me-2"><i
+                        class="fas fa-arrow-left"></i></a>
+                <span>Sozlamalar</span>
+                <div class="ms-auto">
+                    {% if bot.is_active %}
+                    <span class="badge-status status-active"><i class="fas fa-circle fa-xs"></i> Faol</span>
+                    {% else %}
+                    <span class="badge-status status-inactive"><i class="fas fa-circle fa-xs"></i> Nofaol</span>
+                    {% endif %}
+                </div>
+            </div>
+
+            <form method="POST" action="{{ url_for('update_bot', bot_id=bot.id) }}">
+                <div class="mb-3">
+                    <label class="form-label">Bot nomi</label>
+                    <input type="text" name="name" class="form-control" value="{{ bot.name }}" required>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Telegram Token</label>
+                    <input type="text" name="telegram_token" class="form-control" value="{{ bot.telegram_token or '' }}"
+                        placeholder="Tokenni kiriting">
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">System Prompt (Bot aqli)</label>
+                    <textarea name="system_prompt" class="form-control" rows="5"
+                        placeholder="Bot o'zini qanday tutishi kerak?">{{ bot.system_prompt or '' }}</textarea>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label">Til</label>
+                    <select name="language" class="form-select">
+                        <option value="uz" {% if bot.language=='uz' %}selected{% endif %}>O'zbek</option>
+                        <option value="ru" {% if bot.language=='ru' %}selected{% endif %}>Русский</option>
+                        <option value="en" {% if bot.language=='en' %}selected{% endif %}>English</option>
+                    </select>
+                </div>
+
+                <hr style="border-color: var(--border-color);">
+
+                <div class="mb-3">
+                    <label class="form-label">Admin Chat ID</label>
+                    <input type="text" name="admin_chat_id" class="form-control" value="{{ bot.admin_chat_id or '' }}">
+                </div>
+
+                <button type="submit" class="btn btn-primary w-100">
+                    <i class="fas fa-save"></i> Saqlash
+                </button>
+            </form>
+
+            <div class="mt-4 pt-3 border-top border-secondary">
+                <div class="d-flex gap-2">
+                    <form action="{{ url_for('start_bot', bot_id=bot.id) }}" method="POST" class="flex-grow-1">
+                        <button class="btn btn-success w-100" {% if bot.is_active %}disabled{% endif %}>
+                            <i class="fas fa-play"></i> Ishga tushirish
+                        </button>
+                    </form>
+                    <form action="{{ url_for('stop_bot', bot_id=bot.id) }}" method="POST" class="flex-grow-1">
+                        <button class="btn btn-danger w-100" {% if not bot.is_active %}disabled{% endif %}>
+                            <i class="fas fa-stop"></i> To'xtatish
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Right Panel: Knowledge Base -->
+        <div class="content-panel">
+
+            <!-- Flash Messages -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+            {% endfor %}
+            {% endif %}
+            {% endwith %}
+
+            <!-- Stats -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="stat-value">{{ bot.total_messages }}</div>
+                    <div class="stat-label">Jami xabarlar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ stats.total_products }}</div>
+                    <div class="stat-label">Mahsulotlar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ uploaded_files|length }}</div>
+                    <div class="stat-label">Fayllar</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">{{ stats.total_faq }}</div>
+                    <div class="stat-label">Savollar</div>
+                </div>
+            </div>
+
+            <!-- Knowledge Tabs -->
+            <div class="knowledge-section">
+                <ul class="nav nav-tabs" id="knowledgeTabs" role="tablist">
+                    <li class="nav-item">
+                        <button class="nav-link active" data-bs-toggle="tab" data-bs-target="#products">
+                            <i class="fas fa-shopping-bag"></i> Mahsulotlar
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#files">
+                            <i class="fas fa-file-upload"></i> Fayllar
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#faq">
+                            <i class="fas fa-question-circle"></i> Savol-Javob
+                        </button>
+                    </li>
+                    <li class="nav-item">
+                        <button class="nav-link" data-bs-toggle="tab" data-bs-target="#contacts">
+                            <i class="fas fa-address-book"></i> Kontaktlar
+                        </button>
+                    </li>
+                </ul>
+
+                <div class="tab-content" id="knowledgeTabContent">
+
+                    <!-- Products Tab -->
+                    <div class="tab-pane fade show active" id="products">
+                        <form method="POST" action="{{ url_for('add_knowledge', bot_id=bot.id) }}" class="row g-2 mb-4">
+                            <input type="hidden" name="type" value="product">
+                            <div class="col-md-3">
+                                <input type="text" name="name" class="form-control" placeholder="Mahsulot nomi"
+                                    required>
+                            </div>
+                            <div class="col-md-3">
+                                <input type="text" name="description" class="form-control"
+                                    placeholder="Tarif (masalan: rangi, o'lchami)" required>
+                            </div>
+                            <div class="col-md-2">
+                                <input type="text" name="price" class="form-control" placeholder="Narx">
+                            </div>
+                            <div class="col-md-3">
+                                <input type="url" name="image_url" class="form-control"
+                                    placeholder="Rasm URL (ixtiyoriy)">
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary w-100"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </form>
+
+                        <div class="list-group">
+                            {% for item in knowledge.products %}
+                            <div class="knowledge-item">
+                                <div class="d-flex align-items-center gap-3">
+                                    {% if item.image_url %}
+                                    <img src="{{ item.image_url }}" alt="{{ item.name }}"
+                                        style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;">
+                                    {% else %}
+                                    <div
+                                        style="width: 50px; height: 50px; background: #e9ecef; border-radius: 8px; display: flex; align-items: center; justify-content: center;">
+                                        <i class="fas fa-image text-muted"></i>
+                                    </div>
+                                    {% endif %}
+                                    <div>
+                                        <strong class="text-primary">{{ item.name }}</strong>
+                                        <p class="mb-0 small text-muted">{{ item.description }}</p>
+                                        {% if item.price %}<span class="badge bg-success">{{ item.price }}</span>{%
+                                        endif %}
+                                    </div>
+                                </div>
+                                <form method="POST" action="{{ url_for('delete_knowledge', bot_id=bot.id) }}">
+                                    <input type="hidden" name="type" value="products">
+                                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Files Tab -->
+                    <div class="tab-pane fade" id="files">
+                        <form method="POST" action="{{ url_for('upload_knowledge_file', bot_id=bot.id) }}"
+                            enctype="multipart/form-data" class="mb-4">
+                            <div class="input-group">
+                                <input type="file" name="file" class="form-control" accept=".txt,.pdf,.docx,.xlsx,.csv"
+                                    required>
+                                <input type="text" name="description" class="form-control" placeholder="Fayl tarifi">
+                                <button class="btn btn-primary"><i class="fas fa-upload"></i> Yuklash</button>
+                            </div>
+                            <div class="form-text text-muted">Qo'llab-quvvatlanadigan formatlar: PDF, DOCX, TXT, Excel.
+                                Ma'lumot hajmi < 5MB.</div>
+                        </form>
+
+                        <div class="list-group">
+                            {% for file in uploaded_files %}
+                            <div class="knowledge-item">
+                                <div>
+                                    <i class="fas fa-file me-2"></i> <strong>{{ file.filename }}</strong>
+                                    <p class="mb-0 small text-muted">{{ file.description or '' }} • {{
+                                        file.upload_date.strftime('%d.%m.%Y') }}</p>
+                                </div>
+                                <form method="POST"
+                                    action="{{ url_for('delete_knowledge_file', bot_id=bot.id, file_id=file.id) }}">
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- FAQ Tab -->
+                    <div class="tab-pane fade" id="faq">
+                        <form method="POST" action="{{ url_for('add_knowledge', bot_id=bot.id) }}" class="row g-3 mb-4">
+                            <input type="hidden" name="type" value="faq">
+                            <div class="col-md-5">
+                                <input type="text" name="question" class="form-control" placeholder="Savol" required>
+                            </div>
+                            <div class="col-md-6">
+                                <input type="text" name="answer" class="form-control" placeholder="Javob" required>
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary w-100"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </form>
+
+                        <div class="list-group">
+                            {% for item in knowledge.faq %}
+                            <div class="knowledge-item">
+                                <div>
+                                    <strong class="text-dark">S: {{ item.question }}</strong>
+                                    <p class="mb-0 text-muted">J: {{ item.answer }}</p>
+                                </div>
+                                <form method="POST" action="{{ url_for('delete_knowledge', bot_id=bot.id) }}">
+                                    <input type="hidden" name="type" value="faq">
+                                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                    <!-- Contacts Tab -->
+                    <div class="tab-pane fade" id="contacts">
+                        <form method="POST" action="{{ url_for('add_knowledge', bot_id=bot.id) }}" class="row g-3 mb-4">
+                            <input type="hidden" name="type" value="contact">
+                            <div class="col-md-3">
+                                <input type="text" name="name" class="form-control" placeholder="Ism" required>
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" name="phone" class="form-control" placeholder="+998...">
+                            </div>
+                            <div class="col-md-4">
+                                <input type="text" name="telegram" class="form-control" placeholder="@username">
+                            </div>
+                            <div class="col-md-1">
+                                <button class="btn btn-primary w-100"><i class="fas fa-plus"></i></button>
+                            </div>
+                        </form>
+
+                        <div class="list-group">
+                            {% for item in knowledge.contacts %}
+                            <div class="knowledge-item">
+                                <div>
+                                    <strong>{{ item.name }}</strong>
+                                    <div class="small text-muted">
+                                        {% if item.phone %}<i class="fas fa-phone"></i> {{ item.phone }} {% endif %}
+                                        {% if item.telegram %}<i class="fab fa-telegram"></i> {{ item.telegram }} {%
+                                        endif %}
+                                    </div>
+                                </div>
+                                <form method="POST" action="{{ url_for('delete_knowledge', bot_id=bot.id) }}">
+                                    <input type="hidden" name="type" value="contacts">
+                                    <input type="hidden" name="item_id" value="{{ item.id }}">
+                                    <button class="delete-btn"><i class="fas fa-trash"></i></button>
+                                </form>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+
+</html>

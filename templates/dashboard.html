@@ -20,7 +20,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-center">
@@ -32,7 +32,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-center">
@@ -44,7 +44,7 @@
             </div>
         </div>
     </div>
-    
+
     <div class="col-md-3">
         <div class="stat-card">
             <div class="d-flex justify-content-between align-items-center">
@@ -97,81 +97,85 @@
     </div>
     <div class="card-body">
         {% if bots %}
-            <div class="table-responsive">
-                <table class="table">
-                    <thead>
-                        <tr>
-                            <th>Bot Nomi</th>
-                            <th>Til</th>
-                            <th>Username</th>
-                            <th>Xabarlar</th>
-                            <th>Status</th>
-                            <th>Amallar</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for bot in bots %}
-                        <tr>
-                            <td>
-                                <strong>{{ bot.name }}</strong>
-                                {% if bot.description %}
-                                    <br><small class="text-muted">{{ bot.description[:50] }}...</small>
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if bot.language == 'uz' %}
-                                    🇺🇿 O'zbek
-                                {% elif bot.language == 'ru' %}
-                                    🇷🇺 Rus
-                                {% else %}
-                                    🇬🇧 Ingliz
-                                {% endif %}
-                            </td>
-                            <td>
-                                {% if bot.telegram_username %}
-                                    <a href="https://t.me/{{ bot.telegram_username }}" target="_blank">
-                                        @{{ bot.telegram_username }}
-                                    </a>
-                                {% else %}
-                                    <span class="text-muted">Token kiritilmagan</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <span class="badge bg-info">{{ bot.total_messages }}</span>
-                            </td>
-                            <td>
-                                {% if bot.is_active %}
-                                    <span class="badge bg-success">Faol</span>
-                                {% else %}
-                                    <span class="badge bg-secondary">O'chirilgan</span>
-                                {% endif %}
-                            </td>
-                            <td>
-                                <a href="{{ url_for('view_bot', bot_id=bot.id) }}" class="btn btn-sm btn-info">
-                                    <i class="fas fa-eye"></i>
-                                </a>
-                                <form method="POST" action="{{ url_for('delete_bot', bot_id=bot.id) }}" 
-                                      style="display: inline;" 
-                                      onsubmit="return confirm('Rostdan ham o\'chirmoqchimisiz?');">
-                                    <button type="submit" class="btn btn-sm btn-danger">
-                                        <i class="fas fa-trash"></i>
-                                    </button>
-                                </form>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+        <div class="table-responsive">
+            <table class="table">
+                <thead>
+                    <tr>
+                        <th>Bot Nomi</th>
+                        <th>Til</th>
+                        <th>Username</th>
+                        <th>Xabarlar</th>
+                        <th>Status</th>
+                        <th>Amallar</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for bot in bots %}
+                    <tr>
+                        <td>
+                            <strong>{{ bot.name }}</strong>
+                            {% if bot.description %}
+                            <br><small class="text-muted">{{ bot.description[:50] }}...</small>
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if bot.language == 'uz' %}
+                            🇺🇿 O'zbek
+                            {% elif bot.language == 'ru' %}
+                            🇷🇺 Rus
+                            {% else %}
+                            🇬🇧 Ingliz
+                            {% endif %}
+                        </td>
+                        <td>
+                            {% if bot.telegram_username %}
+                            <a href="https://t.me/{{ bot.telegram_username }}" target="_blank">
+                                @{{ bot.telegram_username }}
+                            </a>
+                            {% else %}
+                            <span class="text-muted">Token kiritilmagan</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <span class="badge bg-info">{{ bot.total_messages }}</span>
+                        </td>
+                        <td>
+                            {% if bot.is_active %}
+                            <span class="badge bg-success">Faol</span>
+                            {% else %}
+                            <span class="badge bg-secondary">O'chirilgan</span>
+                            {% endif %}
+                        </td>
+                        <td>
+                            <a href="{{ url_for('view_bot', bot_id=bot.id) }}" class="btn btn-sm btn-info"
+                                title="Ko'rish">
+                                <i class="fas fa-eye"></i>
+                            </a>
+                            <a href="{{ url_for('manage_bot', bot_id=bot.id) }}" class="btn btn-sm btn-warning"
+                                title="O'zgartirish">
+                                <i class="fas fa-edit"></i>
+                            </a>
+                            <form method="POST" action="{{ url_for('delete_bot', bot_id=bot.id) }}"
+                                style="display: inline;" onsubmit="return confirm('Rostdan ham o\'chirmoqchimisiz?');">
+                                <button type="submit" class="btn btn-sm btn-danger">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </form>
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
         {% else %}
-            <div class="text-center py-5">
-                <i class="fas fa-robot fa-3x text-muted mb-3"></i>
-                <h5>Hali bot yaratilmagan</h5>
-                <p class="text-muted">O'zingizning birinchi botingizni yarating!</p>
-                <a href="{{ url_for('create_bot') }}" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Bot Yaratish
-                </a>
-            </div>
+        <div class="text-center py-5">
+            <i class="fas fa-robot fa-3x text-muted mb-3"></i>
+            <h5>Hali bot yaratilmagan</h5>
+            <p class="text-muted">O'zingizning birinchi botingizni yarating!</p>
+            <a href="{{ url_for('create_bot') }}" class="btn btn-primary">
+                <i class="fas fa-plus"></i> Bot Yaratish
+            </a>
+        </div>
         {% endif %}
     </div>
 </div>

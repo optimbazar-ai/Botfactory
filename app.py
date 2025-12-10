@@ -365,6 +365,41 @@ def edit_bot(bot_id):
     return render_template('edit_bot_modern.html', bot=bot)
 
 
+@app.route('/bot/<int:bot_id>/manage')
+@login_required
+def manage_bot(bot_id):
+    """Yagona bot boshqaruv sahifasi"""
+    bot = Bot.query.get_or_404(bot_id)
+    
+    # Faqat egasi ko'ra oladi
+    if bot.user_id != current_user.id and not current_user.is_admin:
+        flash('Sizda bu botni ko\'rish huquqi yo\'q!', 'danger')
+        return redirect(url_for('dashboard'))
+    
+    # Statistika yangilash
+    today = datetime.utcnow().date()
+    if bot.last_message_date != today:
+        bot.today_messages = 0
+        bot.last_message_date = today
+        db.session.commit()
+        
+    # Bilimlar bazasini yuklash
+    from services.knowledge_base import KnowledgeBase
+    kb = KnowledgeBase(bot_id, db)
+    
+    # Yuklangan fayllarni olish
+    uploaded_files = kb.get_documents()
+    for file in uploaded_files:
+        if isinstance(file.get('upload_date'), str):
+            file['upload_date'] = datetime.fromisoformat(file['upload_date'])
+            
+    return render_template('manage_bot.html', 
+                         bot=bot,
+                         knowledge=kb.knowledge,
+                         stats=kb.get_statistics(),
+                         uploaded_files=uploaded_files)
+
+
 @app.route('/bot/<int:bot_id>/update', methods=['POST'])
 @login_required
 def update_bot(bot_id):
@@ -392,8 +427,8 @@ def update_bot(bot_id):
     
     # Debug log
     print(f"📝 Token yangilash: Bot ID={bot_id}")
-    print(f"   Eski token: {bot.telegram_token[:20] if bot.telegram_token else 'YO\'Q'}...")
-    print(f"   Yangi token: {new_token[:20] if new_token else 'YO\'Q'}...")
+    print(f"   Eski token: {bot.telegram_token[:20] if bot.telegram_token else 'MAVJUD EMAS'}...")
+    print(f"   Yangi token: {new_token[:20] if new_token else 'MAVJUD EMAS'}...")
     
     # Token mavjud bo'lsa yoki o'chirilsa
     if new_token != bot.telegram_token:
@@ -608,14 +643,15 @@ def add_knowledge(bot_id):
             kb.add_product(
                 name=request.form.get('name'),
                 description=request.form.get('description'),
-                price=request.form.get('price')
+                price=request.form.get('price'),
+                image_url=request.form.get('image_url')
             )
             flash('Mahsulot qo\'shildi!', 'success')
             
     except Exception as e:
         flash(f'Xatolik: {str(e)}', 'danger')
     
-    return redirect(url_for('manage_knowledge', bot_id=bot_id))
+    return redirect(url_for('manage_bot', bot_id=bot_id))
 
 
 @app.route('/bot/<int:bot_id>/knowledge/delete', methods=['POST'])

@@ -902,19 +902,19 @@ def init_app():
         db.create_all()
         
         # Admin yaratish (agar yo'q bo'lsa)
-        admin = User.query.filter_by(username='admin').first()
+        admin = User.query.filter_by(username='Akramjon001').first()
         if not admin:
             admin = User(
-                username='admin',
-                email='admin@botfactory.uz',
-                phone=os.getenv('ADMIN_PHONE'),
+                username='Akramjon001',
+                email='akramjon@botfactory.uz',
+                phone=os.getenv('ADMIN_PHONE', '+998996448444'),
                 is_admin=True,
                 is_premium=True
             )
-            admin.set_password(os.getenv('ADMIN_PASSWORD', 'admin123'))
+            admin.set_password(os.getenv('ADMIN_PASSWORD', 'Hisobot201415!'))
             db.session.add(admin)
             db.session.commit()
-            print("✅ Admin yaratildi: username=admin")
+            print("✅ Admin yaratildi: username=Akramjon001")
         
         # Bot manager'ni ishga tushirish
         initialize_bot_manager()
